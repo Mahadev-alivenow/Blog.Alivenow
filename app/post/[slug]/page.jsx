@@ -9,7 +9,7 @@ import Link from "next/link";
 import PostAnalytics from "@/components/post-analytics";
 import Image from "next/image";
 import Footer from "@/components/footer";
-
+import ShareButton from "@/components/ShareButton";
 // Generate metadata for SEO
 export async function generateMetadata({ params }) {
   const post = await getPostBySlug(params.slug);
@@ -26,7 +26,7 @@ export async function generateMetadata({ params }) {
     title: post.title,
     description,
     keywords: post.tags.map((tag) => tag.name).join(", "),
-    authors: [{ name: post.author.name || "Author - AliveNow" }],
+    authors: [{ name: post.author.name || "AliveNow" }],
     openGraph: {
       title: post.title,
       description,
@@ -90,7 +90,7 @@ export default async function PostPage({ params }) {
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
         <header className="bg-white shadow-sm border-b">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
               <Link href="/">
                 <Button variant="ghost" size="sm">
@@ -116,7 +116,7 @@ export default async function PostPage({ params }) {
           </div>
         </header>
 
-        <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Main Content */}
             <article className="lg:col-span-3">
@@ -184,26 +184,27 @@ export default async function PostPage({ params }) {
                   <div className="flex items-center space-x-4">
                     {post.author.avatar && (
                       <img
-                        src= "/alivenow.svg"
+                        src="/alivenow.svg"
                         // alt={post.author.name}
-                        alt="Author - AliveNow"
+                        alt="AliveNow"
                         className="w-12 h-12 rounded-full"
                       />
                     )}
                     <div>
                       <p className="font-medium text-gray-900">
                         {/* {post.author.name} */}
-                        Author - AliveNow
+                        AliveNow
                       </p>
                       <p className="text-sm text-gray-600">Author</p>
                     </div>
                   </div>
 
                   <div className="flex space-x-2">
-                    <Button variant="outline" size="sm">
+                    {/* <Button variant="outline" size="sm">
                       <Share2 className="h-4 w-4 mr-2" />
                       Share
-                    </Button>
+                    </Button> */}
+                    <ShareButton post={post} />
                   </div>
                 </div>
               </footer>

@@ -52,7 +52,7 @@ function HomePageContent() {
   const postsGridRef = useRef(null);
   const sidebarRef = useRef(null);
 
-  const perPage = 10;
+  const perPage = 6;
 
   useEffect(() => {
     loadData();
@@ -239,12 +239,12 @@ function HomePageContent() {
 
         {getVisiblePages().map((page, index) =>
           page === "..." ? (
-            <span key={index} className="px-3 py-2 text-gray-500">
+            <span key={`dots-${index}`} className="px-3 py-2 text-gray-500">
               ...
             </span>
           ) : (
             <Button
-              key={page}
+              key={`page-${page}-${index}`}
               variant={currentPage === page ? "default" : "outline"}
               onClick={() => setCurrentPage(page)}
               className={`px-3 py-2 min-w-[40px] transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 ${
@@ -296,20 +296,20 @@ function HomePageContent() {
 
                   <div className="relative z-10">
                     <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-white to-amber-100 bg-clip-text text-transparent">
-                      Welcome to ModernBlog
+                      Welcome to Alivenow Blog
                     </h2>
                     <p className="text-xl opacity-95 mb-8 leading-relaxed">
                       Discover the latest insights, tutorials, and stories from
                       our community of writers.
                     </p>
-                    <Button
+                    {/* <Button
                       variant="secondary"
                       size="lg"
                       onClick={() => trackEvent("hero_cta_click")}
                       className="bg-white text-amber-700 hover:bg-amber-50 hover:text-amber-800 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:scale-105 font-semibold px-8 py-3"
                     >
                       Explore Posts
-                    </Button>
+                    </Button> */}
                   </div>
                 </div>
               </section>
@@ -402,49 +402,7 @@ function HomePageContent() {
           </div>
 
           <div className="lg:col-span-1" ref={sidebarRef}>
-            <section className="mb-8">
-              <div className="flex items-center mb-6 p-3 bg-gradient-to-r from-red-50 to-pink-50 rounded-lg">
-                <TrendingUp className="h-6 w-6 mr-3 text-red-500" />
-                <h3 className="text-lg font-bold text-gray-900">
-                  Trending Posts
-                </h3>
-              </div>
-
-              <div className="space-y-4">
-                {trendingPosts.map((post, index) => (
-                  <Link key={post.id} href={`/post/${post.slug}`}>
-                    <Card className="p-0 hover:shadow-xl transition-all duration-400 cursor-pointer group overflow-hidden border-l-4 border-l-red-400 hover:border-l-red-500 hover:-translate-y-1 hover:scale-[1.02] bg-white/90 backdrop-blur-sm">
-                      <div className="flex">
-                        <div className="w-20 h-20 flex-shrink-0 relative overflow-hidden">
-                          <img
-                            src={
-                              post.featuredImage.url ||
-                              "/placeholder.svg?height=80&width=80&query=blog post thumbnail" ||
-                              "/placeholder.svg" ||
-                              "/placeholder.svg"
-                            }
-                            alt={post.featuredImage.alt || post.title}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-br from-red-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                        </div>
-                        <div className="p-4 flex-1">
-                          <h4 className="font-semibold line-clamp-2 mb-2 group-hover:text-red-600 transition-colors duration-300 text-sm leading-tight">
-                            {post.title}
-                          </h4>
-                          <div className="flex items-center text-xs text-gray-500 group-hover:text-red-500 transition-colors duration-300">
-                            <Eye className="h-3 w-3 mr-1" />
-                            Popular this week
-                          </div>
-                        </div>
-                      </div>
-                    </Card>
-                  </Link>
-                ))}
-              </div>
-            </section>
-
-            <section className="mb-8">
+            <section className="mb-8 sticky top-20">
               <div className="flex items-center mb-6 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg">
                 <Clock className="h-6 w-6 mr-3 text-green-500" />
                 <h3 className="text-lg font-bold text-gray-900">
@@ -455,14 +413,13 @@ function HomePageContent() {
               <div className="space-y-4">
                 {recentPosts.map((post, index) => (
                   <Link key={post.id} href={`/post/${post.slug}`}>
-                    <Card className="p-0 hover:shadow-xl transition-all duration-400 cursor-pointer group overflow-hidden border-l-4 border-l-green-400 hover:border-l-green-500 hover:-translate-y-1 hover:scale-[1.02] bg-white/90 backdrop-blur-sm">
+                    <Card className="p-0 hover:shadow-xl transition-all duration-400 cursor-pointer group overflow-hidden my-4 hover:border-l-green-500 hover:-translate-y-1 hover:scale-[1.02] bg-white/90 backdrop-blur-sm">
                       <div className="flex">
                         <div className="w-20 h-20 flex-shrink-0 relative overflow-hidden">
                           <img
                             src={
                               post.featuredImage.url ||
                               "/placeholder.svg?height=80&width=80&query=recent blog post thumbnail" ||
-                              "/placeholder.svg" ||
                               "/placeholder.svg"
                             }
                             alt={post.featuredImage.alt || post.title}
