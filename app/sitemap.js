@@ -4,7 +4,9 @@ import { getPosts } from "@/lib/wordpress";
 export const dynamic = "force-dynamic";
 
 export default async function sitemap() {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://alivenow.com";
+  const baseUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    "https://clownfish-app-v6pxe.ondigitalocean.app";
 
   let posts = [];
   try {
