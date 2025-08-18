@@ -26,7 +26,8 @@ export const metadata: Metadata = {
     telephone: false,
   },
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || "https://alivenow.com"
+    process.env.NEXT_PUBLIC_SITE_URL ||
+      "https://clownfish-app-v6pxe.ondigitalocean.app"
   ),
   alternates: {
     canonical: "/",
