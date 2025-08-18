@@ -100,13 +100,15 @@ export default async function PostPage({ params }) {
               </Link>
 
               {/* <h1 className="text-xl font-bold text-gray-900">AliveNow</h1> */}
-              <Image
-                src="/alivenow.svg"
-                alt="AliveNow icon"
-                width={32}
-                height={32}
-                className="h-12 w-auto"
-              />
+              <Link href="/" className="block">
+                <Image
+                  src="/alivenow.svg"
+                  alt="AliveNow icon"
+                  width={32}
+                  height={32}
+                  className="h-12 w-auto"
+                />
+              </Link>
 
               <Button variant="outline" size="sm">
                 <Share2 className="h-4 w-4 mr-2" />
@@ -143,8 +145,10 @@ export default async function PostPage({ params }) {
                 </div>
 
                 {/* Title */}
-                <h1 className="text-4xl font-bold text-gray-900 mb-4 leading-tight">
-                  {post.title}
+                <h1 className="text-4xl font-bold text-gray-900 mb-4 leading-tight"
+                  dangerouslySetInnerHTML={{ __html: post.title }}
+                >
+                  {/* {post.title} */}
                 </h1>
 
                 {/* Meta Information */}
@@ -311,8 +315,10 @@ export default async function PostPage({ params }) {
                             <div className="absolute inset-0 bg-gradient-to-br from-green-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                           </div>
                           <div className="p-4 flex-1">
-                            <h4 className="font-semibold line-clamp-2 mb-2 group-hover:text-green-600 transition-colors duration-300 text-sm leading-tight">
-                              {post.title}
+                            <h4 className="font-semibold line-clamp-2 mb-2 group-hover:text-green-600 transition-colors duration-300 text-sm leading-tight"
+                            dangerouslySetInnerHTML={{ __html: post.title }}
+                            >
+                              {/* {post.title} */}
                             </h4>
                             <div className="text-xs text-gray-500 group-hover:text-green-500 transition-colors duration-300">
                               {formatDate(post.date)}

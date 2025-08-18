@@ -368,8 +368,11 @@ function HomePageContent() {
                         </CardHeader>
 
                         <CardContent>
-                          <p className="text-gray-600 mb-4 line-clamp-3 group-hover:text-gray-700 transition-colors duration-300">
-                            {stripHtml(post.excerpt)}
+                          <p
+                            className="text-gray-600 mb-4 line-clamp-3 group-hover:text-gray-700 transition-colors duration-300"
+                            dangerouslySetInnerHTML={{ __html: post.excerpt }}
+                          >
+                            {/* {stripHtml(post.excerpt)} */}
                           </p>
 
                           <div className="flex items-center justify-between text-sm text-gray-500">
@@ -405,7 +408,7 @@ function HomePageContent() {
           </div>
 
           <div className="lg:col-span-1" ref={sidebarRef}>
-            <section className="mb-8 sticky top-20">
+            <section className="mb-8 sticky top-52">
               <div className="flex items-center mb-6 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg">
                 <Clock className="h-6 w-6 mr-3 text-green-500" />
                 <h3 className="text-lg font-bold text-gray-900">

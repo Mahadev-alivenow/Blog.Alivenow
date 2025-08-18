@@ -127,8 +127,11 @@ export default function SearchModal({ isOpen, onClose, onSearch }) {
                         />
                       )}
                       <div className="flex-1">
-                        <h5 className="font-medium line-clamp-1 hover:text-blue-600 transition-colors">
-                          {post.title}
+                        <h5
+                          className="font-medium line-clamp-1 hover:text-blue-600 transition-colors"
+                          dangerouslySetInnerHTML={{ __html: post.title }}
+                        >
+                          {/* {post.title} */}
                         </h5>
                         <p className="text-sm text-gray-600 line-clamp-2 mt-1">
                           {stripHtml(post.excerpt)}
