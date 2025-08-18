@@ -51,6 +51,16 @@ function HomePageContent() {
   const heroRef = useRef(null);
   const postsGridRef = useRef(null);
   const sidebarRef = useRef(null);
+  const [randomTags, setRandomTags] = useState([]);
+
+  useEffect(() => {
+    if (tags.length > 0 && randomTags.length === 0) {
+      // shuffle only once
+      const shuffled = [...tags].sort(() => 0.5 - Math.random());
+      setRandomTags(shuffled.slice(0, 10));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tags]); // remove randomTags from dependency to avoid reshuffle
 
   const perPage = 6;
 
@@ -170,12 +180,21 @@ function HomePageContent() {
     }
   }, [trendingPosts, recentPosts]);
 
+  const handleTagClick = (tag) => {
+    const newSelectedTags = selectedTags.includes(tag.id)
+      ? selectedTags.filter((id) => id !== tag.id)
+      : [...selectedTags, tag.id];
+
+    setSelectedTags(newSelectedTags);
+    // onTagFilter(newSelectedTags);
+  };
+
   if (loading && posts.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50">
         <BlogHeader
           onSearch={() => setShowSearchModal(true)}
-          onTagFilter={handleTagFilter}
+          // onTagFilter={handleTagFilter}
           tags={tags}
         />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -288,31 +307,7 @@ function HomePageContent() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           <div className="lg:col-span-3">
             {currentPage === 1 && !searchQuery && selectedTags.length === 0 && (
-              <section className="mb-12" ref={heroRef}>
-                <div className="bg-gradient-to-br from-amber-600 via-amber-500 to-orange-600 rounded-3xl p-8 text-white relative overflow-hidden shadow-2xl">
-                  <div className="absolute inset-0 bg-gradient-to-br from-amber-400/20 to-transparent"></div>
-                  <div className="absolute -top-4 -right-4 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
-                  <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
-
-                  <div className="relative z-10">
-                    <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-white to-amber-100 bg-clip-text text-transparent">
-                      Welcome to Alivenow Blog
-                    </h2>
-                    <p className="text-xl opacity-95 mb-8 leading-relaxed">
-                      Discover the latest insights, tutorials, and stories from
-                      our community of writers.
-                    </p>
-                    {/* <Button
-                      variant="secondary"
-                      size="lg"
-                      onClick={() => trackEvent("hero_cta_click")}
-                      className="bg-white text-amber-700 hover:bg-amber-50 hover:text-amber-800 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:scale-105 font-semibold px-8 py-3"
-                    >
-                      Explore Posts
-                    </Button> */}
-                  </div>
-                </div>
-              </section>
+              <section className="mb-12" ref={heroRef}></section>
             )}
 
             <section>
@@ -408,7 +403,7 @@ function HomePageContent() {
           </div>
 
           <div className="lg:col-span-1" ref={sidebarRef}>
-            <section className="mb-8 sticky top-52">
+            <section className="mb-8 sticky top-20">
               <div className="flex items-center mb-6 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg">
                 <Clock className="h-6 w-6 mr-3 text-green-500" />
                 <h3 className="text-lg font-bold text-gray-900">
@@ -448,6 +443,32 @@ function HomePageContent() {
                     </Card>
                   </Link>
                 ))}
+
+                {/* Tags Filter */}
+                {randomTags.length > 0 && (
+                  <div className="py-4 border-t border-gray-100">
+                    <div className="flex flex-wrap gap-2">
+                      <span className="text-sm font-medium text-gray-700 mr-3">
+                        Filter by tags:
+                      </span>
+                      {randomTags.map((tag) => (
+                        <Button
+                          key={tag.id}
+                          variant={
+                            selectedTags.includes(tag.id)
+                              ? "default"
+                              : "outline"
+                          }
+                          size="sm"
+                          onClick={() => handleTagClick(tag)}
+                          className="text-xs"
+                        >
+                          {tag.name} ({tag.count})
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </section>
           </div>

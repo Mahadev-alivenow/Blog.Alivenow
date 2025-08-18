@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function BlogHeader({ onSearch, onTagFilter, tags = [] }) {
+export default function BlogHeader({ onSearch, tags = [] }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTags, setSelectedTags] = useState([]);
@@ -33,14 +33,14 @@ export default function BlogHeader({ onSearch, onTagFilter, tags = [] }) {
     }
   };
 
-  const handleTagClick = (tag) => {
-    const newSelectedTags = selectedTags.includes(tag.id)
-      ? selectedTags.filter((id) => id !== tag.id)
-      : [...selectedTags, tag.id];
+  // const handleTagClick = (tag) => {
+  //   const newSelectedTags = selectedTags.includes(tag.id)
+  //     ? selectedTags.filter((id) => id !== tag.id)
+  //     : [...selectedTags, tag.id];
 
-    setSelectedTags(newSelectedTags);
-    onTagFilter(newSelectedTags);
-  };
+  //   setSelectedTags(newSelectedTags);
+  //   onTagFilter(newSelectedTags);
+  // };
 
   return (
     <header className="bg-white shadow-sm border-b sticky top-0 z-50">
@@ -49,15 +49,15 @@ export default function BlogHeader({ onSearch, onTagFilter, tags = [] }) {
         <div className="flex items-center justify-between h-16 my-2 ">
           {/* Logo */}
           <div className="flex-shrink-0">
-          <Link href="/" className="block">
-            <Image
-              src="/alivenow.svg"
-              alt="AliveNow icon"
-              width={100}
-              height={100}
-              className="h-16 w-auto"
-            />
-          </Link>
+            <Link href="/" className="block">
+              <Image
+                src="/alivenow.svg"
+                alt="AliveNow icon"
+                width={100}
+                height={100}
+                className="h-16 w-auto"
+              />
+            </Link>
           </div>
 
           {/* Search Bar */}
@@ -93,7 +93,7 @@ export default function BlogHeader({ onSearch, onTagFilter, tags = [] }) {
         </div>
 
         {/* Tags Filter */}
-        {randomTags.length > 0 && (
+        {/* {randomTags.length > 0 && (
           <div className="py-4 border-t border-gray-100">
             <div className="flex flex-wrap gap-2">
               <span className="text-sm font-medium text-gray-700 mr-3">
@@ -114,7 +114,7 @@ export default function BlogHeader({ onSearch, onTagFilter, tags = [] }) {
               ))}
             </div>
           </div>
-        )}
+        )} */}
       </div>
     </header>
   );
