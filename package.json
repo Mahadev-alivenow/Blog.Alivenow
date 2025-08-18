@@ -7,8 +7,7 @@
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start",
-    "postinstall": "npm install --legacy-peer-deps"
-  },
+    "postinstall": "echo '✅ postinstall completed successfully'"  },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
     "@next/swc-wasm-nodejs": "^15.4.6",
