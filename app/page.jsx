@@ -1,8 +1,15 @@
 "use client";
 
-import { useState, useEffect, useRef, Suspense } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  Suspense,
+  useMemo,
+  useCallback,
+} from "react";
+import dynamic from "next/dynamic";
 import BlogHeader from "@/components/blog-header";
-import SearchModal from "@/components/search-modal";
 import Footer from "@/components/footer";
 import {
   getPosts,
@@ -14,22 +21,188 @@ import { trackSearch, trackTagClick, trackEvent } from "@/components/analytics";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, User, TrendingUp, Clock, Eye } from "lucide-react";
+import { Calendar, User, Clock, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { gsap } from "gsap";
 import { stripHtml, formatDate } from "@/utils/helpers";
-import TagsFilter from "@/components/FilterByTags";
+
+// Lazy load heavy components
+const SearchModal = dynamic(() => import("@/components/search-modal"), {
+  loading: () => <div>Loading search...</div>,
+  ssr: false,
+});
+
+const TagsFilter = dynamic(() => import("@/components/FilterByTags"), {
+  loading: () => <div className="animate-pulse bg-gray-100 h-20 rounded"></div>,
+  ssr: false,
+});
+
+// Optimized Image Component with Lazy Loading
+function LazyImage({
+  src,
+  alt,
+  className,
+  aspectRatio = "aspect-video",
+  priority = false,
+}) {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isInView, setIsInView] = useState(priority);
+  const imgRef = useRef(null);
+  const [imageSrc, setImageSrc] = useState(priority ? src : null);
+
+  useEffect(() => {
+    if (priority) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+          setImageSrc(src);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "50px" }
+    );
+
+    if (imgRef.current) {
+      observer.observe(imgRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [src, priority]);
+
+  return (
+    <div
+      ref={imgRef}
+      className={`${aspectRatio} overflow-hidden relative ${className}`}
+    >
+      {!isLoaded && (
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 animate-pulse flex items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+        </div>
+      )}
+      {imageSrc && (
+        <img
+          src={imageSrc}
+          alt={alt}
+          className={`w-full h-full object-cover transition-all duration-700 ${
+            isLoaded ? "opacity-100 group-hover:scale-110" : "opacity-0"
+          }`}
+          onLoad={() => setIsLoaded(true)}
+          loading={priority ? "eager" : "lazy"}
+        />
+      )}
+    </div>
+  );
+}
+
+// Memoized Post Card Component
+const PostCard = ({ post, index }) => {
+  const cardRef = useRef(null);
+
+  useEffect(() => {
+    if (cardRef.current) {
+      // Simplified animation with better performance
+      gsap.fromTo(
+        cardRef.current,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.4,
+          delay: index * 0.05,
+          ease: "power2.out",
+        }
+      );
+    }
+  }, [index]);
+
+  return (
+    <Link href={`/post/${post.slug}`}>
+      <Card
+        ref={cardRef}
+        className="overflow-hidden hover:shadow-2xl transition-all duration-300 group cursor-pointer border-0 shadow-lg hover:-translate-y-1 hover:scale-[1.01] bg-white"
+      >
+        <LazyImage
+          src={post.featuredImage.url}
+          alt={post.featuredImage.alt}
+          priority={index < 2} // Priority load for first 2 images
+        />
+
+        <CardHeader className="pb-3">
+          <div className="flex flex-wrap gap-2 mb-3">
+            {post.tags.slice(0, 3).map((tag) => (
+              <Badge
+                key={tag.id}
+                variant="secondary"
+                className="text-xs hover:bg-amber-100 hover:text-amber-800 transition-colors duration-200"
+              >
+                {tag.name}
+              </Badge>
+            ))}
+          </div>
+
+          <h3
+            className="text-xl font-bold line-clamp-2 group-hover:text-amber-700 transition-colors duration-200 leading-tight"
+            dangerouslySetInnerHTML={{ __html: post.title }}
+          />
+        </CardHeader>
+
+        <CardContent>
+          <p
+            className="text-gray-600 mb-4 line-clamp-3 group-hover:text-gray-700 transition-colors duration-200"
+            dangerouslySetInnerHTML={{ __html: post.excerpt }}
+          />
+
+          <div className="flex items-center justify-between text-sm text-gray-500">
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center">
+                <User className="h-4 w-4 mr-1" />
+                Author - AliveNow
+              </div>
+              <div className="flex items-center">
+                <Calendar className="h-4 w-4 mr-1" />
+                {formatDate(post.date)}
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </Link>
+  );
+};
+
+// Memoized Recent Post Component
+const RecentPostCard = ({ post, index }) => (
+  <Link href={`/post/${post.slug}`}>
+    <Card className="p-0 hover:shadow-lg transition-all duration-300 cursor-pointer group overflow-hidden my-4 hover:border-l-green-500 hover:-translate-y-1 bg-white">
+      <div className="flex">
+        <LazyImage
+          src={post.featuredImage.url}
+          alt={post.featuredImage.alt || post.title}
+          className="w-20 h-20 flex-shrink-0"
+          aspectRatio=""
+        />
+        <div className="p-4 flex-1">
+          <h4
+            className="font-semibold line-clamp-2 mb-2 group-hover:text-green-600 transition-colors duration-200 text-sm leading-tight"
+            dangerouslySetInnerHTML={{ __html: post.title }}
+          />
+          <div className="text-xs text-gray-500">{formatDate(post.date)}</div>
+        </div>
+      </div>
+    </Card>
+  </Link>
+);
+
 function PageLoadingFallback() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center">
-          <div className="relative">
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-amber-200 border-t-amber-600 mx-auto shadow-lg"></div>
-            <div className="absolute inset-0 rounded-full h-16 w-16 border-4 border-transparent border-t-amber-400 mx-auto animate-pulse"></div>
-          </div>
-          <p className="mt-6 text-gray-700 text-lg font-medium animate-pulse">
-            Loading ...
+          <Loader2 className="h-16 w-16 animate-spin text-amber-600 mx-auto" />
+          <p className="mt-4 text-gray-700 text-lg font-medium">
+            Loading amazing content...
           </p>
         </div>
       </div>
@@ -40,6 +213,7 @@ function PageLoadingFallback() {
 function HomePageContent() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [sidebarLoading, setSidebarLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -48,163 +222,140 @@ function HomePageContent() {
   const [trendingPosts, setTrendingPosts] = useState([]);
   const [recentPosts, setRecentPosts] = useState([]);
   const [showSearchModal, setShowSearchModal] = useState(false);
+  const [randomTags, setRandomTags] = useState([]);
   const heroRef = useRef(null);
   const postsGridRef = useRef(null);
-  const sidebarRef = useRef(null);
-  const [randomTags, setRandomTags] = useState([]);
-
-  useEffect(() => {
-    if (tags.length > 0 && randomTags.length === 0) {
-      // shuffle only once
-      const shuffled = [...tags].sort(() => 0.5 - Math.random());
-      setRandomTags(shuffled.slice(0, 10));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tags]); // remove randomTags from dependency to avoid reshuffle
 
   const perPage = 6;
 
+  // Memoize random tags to prevent reshuffling
+  const memoizedRandomTags = useMemo(() => {
+    if (tags.length > 0) {
+      const shuffled = [...tags].sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, 10);
+    }
+    return [];
+  }, [tags]);
+
   useEffect(() => {
-    loadData();
+    setRandomTags(memoizedRandomTags);
+  }, [memoizedRandomTags]);
+
+  // Load critical data first (posts and tags)
+  useEffect(() => {
+    loadCriticalData();
   }, [currentPage, searchQuery, selectedTags]);
 
-  const loadData = async () => {
+  // Load sidebar data separately to avoid blocking main content
+  useEffect(() => {
+    loadSidebarData();
+  }, []);
+
+  const loadCriticalData = async () => {
     setLoading(true);
     try {
-      const [postsData, tagsData, trendingData, recentData] = await Promise.all(
-        [
-          getPosts({
-            page: currentPage,
-            perPage: perPage,
-            search: searchQuery,
-            tags: selectedTags,
-          }),
-          getTags(),
-          getTrendingPosts(),
-          getRecentPosts(),
-        ]
-      );
+      const [postsData, tagsData] = await Promise.all([
+        getPosts({
+          page: currentPage,
+          perPage: perPage,
+          search: searchQuery,
+          tags: selectedTags,
+        }),
+        currentPage === 1 && !searchQuery && selectedTags.length === 0
+          ? getTags()
+          : Promise.resolve(tags.length > 0 ? tags : []),
+      ]);
 
       setPosts(postsData.posts);
       setTotalPages(postsData.totalPages);
-      setTags(tagsData);
-      setTrendingPosts(trendingData);
-      setRecentPosts(recentData);
+
+      if (Array.isArray(tagsData) && tagsData.length > 0) {
+        setTags(tagsData);
+      }
 
       if (searchQuery) {
         trackSearch(searchQuery, postsData.totalPosts);
       }
     } catch (error) {
-      console.error("Error loading data:", error);
+      console.error("Error loading critical data:", error);
       setPosts([]);
-      setTags([]);
-      setTrendingPosts([]);
-      setRecentPosts([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSearch = (query) => {
+  const loadSidebarData = async () => {
+    try {
+      const [trendingData, recentData] = await Promise.all([
+        getTrendingPosts(),
+        getRecentPosts(),
+      ]);
+
+      setTrendingPosts(trendingData);
+      setRecentPosts(recentData);
+    } catch (error) {
+      console.error("Error loading sidebar data:", error);
+      setTrendingPosts([]);
+      setRecentPosts([]);
+    } finally {
+      setSidebarLoading(false);
+    }
+  };
+
+  const handleSearch = useCallback((query) => {
     setSearchQuery(query);
     setCurrentPage(1);
     setShowSearchModal(false);
     if (query) {
       trackEvent("search_initiated", { search_term: query });
     }
-  };
+  }, []);
 
-  const handleTagFilter = (tagIds) => {
-    setSelectedTags(tagIds);
-    setCurrentPage(1);
-    tagIds.forEach((tagId) => {
-      const tag = tags.find((t) => t.id === tagId);
-      if (tag) {
-        trackTagClick(tag.name, tag.id);
-      }
-    });
-  };
+  const handleTagFilter = useCallback(
+    (tagIds) => {
+      setSelectedTags(tagIds);
+      setCurrentPage(1);
+      tagIds.forEach((tagId) => {
+        const tag = tags.find((t) => t.id === tagId);
+        if (tag) {
+          trackTagClick(tag.name, tag.id);
+        }
+      });
+    },
+    [tags]
+  );
 
+  const handleTagClick = useCallback(
+    (tag) => {
+      const newSelectedTags = selectedTags.includes(tag.id)
+        ? selectedTags.filter((id) => id !== tag.id)
+        : [...selectedTags, tag.id];
+
+      setSelectedTags(newSelectedTags);
+    },
+    [selectedTags]
+  );
+
+  // Simplified hero animation
   useEffect(() => {
     if (heroRef.current) {
       gsap.fromTo(
         heroRef.current,
-        { opacity: 0, y: 30, scale: 0.95 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 1,
-          ease: "power3.out",
-        }
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }
       );
     }
   }, []);
 
-  useEffect(() => {
-    if (postsGridRef.current && posts.length > 0) {
-      const cards = postsGridRef.current.children;
-      gsap.fromTo(
-        cards,
-        { opacity: 0, y: 40, scale: 0.9 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.8,
-          stagger: 0.1,
-          ease: "power2.out",
-        }
-      );
-    }
-  }, [posts]);
-
-  useEffect(() => {
-    if (
-      sidebarRef.current &&
-      (trendingPosts.length > 0 || recentPosts.length > 0)
-    ) {
-      const sections = sidebarRef.current.children;
-      gsap.fromTo(
-        sections,
-        { opacity: 0, x: 30 },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 0.8,
-          stagger: 0.2,
-          ease: "power2.out",
-          delay: 0.3,
-        }
-      );
-    }
-  }, [trendingPosts, recentPosts]);
-
-  const handleTagClick = (tag) => {
-    const newSelectedTags = selectedTags.includes(tag.id)
-      ? selectedTags.filter((id) => id !== tag.id)
-      : [...selectedTags, tag.id];
-
-    setSelectedTags(newSelectedTags);
-    // onTagFilter(newSelectedTags);
-  };
-
   if (loading && posts.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <BlogHeader
-          onSearch={() => setShowSearchModal(true)}
-          // onTagFilter={handleTagFilter}
-          tags={tags}
-        />
+        <BlogHeader onSearch={() => setShowSearchModal(true)} tags={tags} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center">
-            <div className="relative">
-              <div className="animate-spin rounded-full h-16 w-16 border-4 border-amber-200 border-t-amber-600 mx-auto shadow-lg"></div>
-              <div className="absolute inset-0 rounded-full h-16 w-16 border-4 border-transparent border-t-amber-400 mx-auto animate-pulse"></div>
-            </div>
-            <p className="mt-6 text-gray-700 text-lg font-medium animate-pulse">
-              Loading ...
+            <Loader2 className="h-16 w-16 animate-spin text-amber-600 mx-auto" />
+            <p className="mt-4 text-gray-700 text-lg font-medium">
+              Loading your content...
             </p>
           </div>
         </div>
@@ -251,7 +402,7 @@ function HomePageContent() {
           variant="outline"
           onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
           disabled={currentPage === 1}
-          className="px-4 py-2 hover:bg-amber-50 hover:border-amber-300 hover:text-amber-700 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 hover:cursor-pointer"
+          className="px-4 py-2 hover:bg-amber-50 hover:border-amber-300 transition-all duration-200 hover:cursor-pointer"
         >
           Previous
         </Button>
@@ -266,9 +417,9 @@ function HomePageContent() {
               key={`page-${page}-${index}`}
               variant={currentPage === page ? "default" : "outline"}
               onClick={() => setCurrentPage(page)}
-              className={`px-3 py-2 min-w-[40px] transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 hover:cursor-pointer ${
+              className={`px-3 py-2 min-w-[40px] transition-all duration-200 hover:cursor-pointer ${
                 currentPage === page
-                  ? "bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 shadow-lg"
+                  ? "bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700"
                   : "hover:bg-amber-50 hover:border-amber-300 hover:text-amber-700"
               }`}
             >
@@ -281,7 +432,7 @@ function HomePageContent() {
           variant="outline"
           onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
           disabled={currentPage === totalPages}
-          className="px-4 py-2 hover:bg-amber-50 hover:border-amber-300 hover:text-amber-700 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 hover:cursor-pointer"
+          className="px-4 py-2 hover:bg-amber-50 hover:border-amber-300 transition-all duration-200 hover:cursor-pointer"
         >
           Next
         </Button>
@@ -297,28 +448,32 @@ function HomePageContent() {
         tags={tags}
       />
 
-      <SearchModal
-        isOpen={showSearchModal}
-        onClose={() => setShowSearchModal(false)}
-        onSearch={handleSearch}
-      />
+      {showSearchModal && (
+        <SearchModal
+          isOpen={showSearchModal}
+          onClose={() => setShowSearchModal(false)}
+          onSearch={handleSearch}
+        />
+      )}
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           <div className="lg:col-span-3">
             {currentPage === 1 && !searchQuery && selectedTags.length === 0 && (
-              <section className="mb-12" ref={heroRef}></section>
+              <section className="mb-12" ref={heroRef}>
+                {/* Hero content can be added here */}
+              </section>
             )}
 
             <section>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-3xl font-bold text-gray-900 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text">
+                <h2 className="text-3xl font-bold text-gray-900">
                   {searchQuery
                     ? `Search Results for "${searchQuery}"`
                     : "Latest Posts"}
                 </h2>
                 <div className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                  Showing {posts.length} of {totalPages * perPage} posts
+                  Showing {posts.length} posts
                 </div>
               </div>
 
@@ -328,63 +483,7 @@ function HomePageContent() {
                   ref={postsGridRef}
                 >
                   {posts.map((post, index) => (
-                    <Link key={post.id} href={`/post/${post.slug}`}>
-                      <Card className="overflow-hidden hover:shadow-2xl transition-all duration-500 group cursor-pointer border-0 shadow-lg hover:-translate-y-2 hover:scale-[1.02] bg-white/80 backdrop-blur-sm">
-                        {post.featuredImage.url && (
-                          <div className="aspect-video overflow-hidden relative">
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                            <img
-                              src={post.featuredImage.url || "/placeholder.svg"}
-                              alt={post.featuredImage.alt}
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                            />
-                          </div>
-                        )}
-
-                        <CardHeader className="pb-3">
-                          <div className="flex flex-wrap gap-2 mb-3">
-                            {post.tags.slice(0, 3).map((tag) => (
-                              <Badge
-                                key={tag.id}
-                                variant="secondary"
-                                className="text-xs hover:bg-amber-100 hover:text-amber-800 hover:border-amber-300 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5"
-                              >
-                                {tag.name}
-                              </Badge>
-                            ))}
-                          </div>
-
-                          <h3
-                            className="text-xl font-bold line-clamp-2 group-hover:text-amber-700 cursor-pointer transition-all duration-300 leading-tight"
-                            dangerouslySetInnerHTML={{ __html: post.title }}
-                          >
-                            {/* {post.title} */}
-                          </h3>
-                        </CardHeader>
-
-                        <CardContent>
-                          <p
-                            className="text-gray-600 mb-4 line-clamp-3 group-hover:text-gray-700 transition-colors duration-300"
-                            dangerouslySetInnerHTML={{ __html: post.excerpt }}
-                          >
-                            {/* {stripHtml(post.excerpt)} */}
-                          </p>
-
-                          <div className="flex items-center justify-between text-sm text-gray-500">
-                            <div className="flex items-center space-x-4">
-                              <div className="flex items-center hover:text-amber-600 transition-colors duration-300">
-                                <User className="h-4 w-4 mr-1" />
-                                Author - AliveNow
-                              </div>
-                              <div className="flex items-center hover:text-amber-600 transition-colors duration-300">
-                                <Calendar className="h-4 w-4 mr-1" />
-                                {formatDate(post.date)}
-                              </div>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </Link>
+                    <PostCard key={post.id} post={post} index={index} />
                   ))}
                 </div>
               ) : (
@@ -402,7 +501,7 @@ function HomePageContent() {
             </section>
           </div>
 
-          <div className="lg:col-span-1" ref={sidebarRef}>
+          <div className="lg:col-span-1">
             <section className="mb-8 sticky top-20">
               <div className="flex items-center mb-6 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg">
                 <Clock className="h-6 w-6 mr-3 text-green-500" />
@@ -412,69 +511,28 @@ function HomePageContent() {
               </div>
 
               <div className="space-y-4">
-                {recentPosts.map((post, index) => (
-                  <Link key={post.id} href={`/post/${post.slug}`}>
-                    <Card className="p-0 hover:shadow-xl transition-all duration-400 cursor-pointer group overflow-hidden my-4 hover:border-l-green-500 hover:-translate-y-1 hover:scale-[1.02] bg-white/90 backdrop-blur-sm">
-                      <div className="flex">
-                        <div className="w-20 h-20 flex-shrink-0 relative overflow-hidden">
-                          <img
-                            src={
-                              post.featuredImage.url ||
-                              "/placeholder.svg?height=80&width=80&query=recent blog post thumbnail" ||
-                              "/placeholder.svg"
-                            }
-                            alt={post.featuredImage.alt || post.title}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-br from-green-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                        </div>
-                        <div className="p-4 flex-1">
-                          <h4
-                            className="font-semibold line-clamp-2 mb-2 group-hover:text-green-600 transition-colors duration-300 text-sm leading-tight"
-                            dangerouslySetInnerHTML={{ __html: post.title }}
-                          >
-                            {/* {post.title} */}
-                          </h4>
-                          <div className="text-xs text-gray-500 group-hover:text-green-500 transition-colors duration-300">
-                            {formatDate(post.date)}
-                          </div>
-                        </div>
-                      </div>
-                    </Card>
-                  </Link>
-                ))}
-
-                {/* Tags Filter */}
-                {/* {randomTags.length > 0 && (
-                  <div className="py-4 border-t border-gray-100">
-                    <div className="flex flex-wrap gap-2">
-                      <span className="text-sm font-medium text-gray-700 mr-3">
-                        Filter by tags:
-                      </span>
-                      {randomTags.map((tag) => (
-                        <Button
-                          key={tag.id}
-                          variant={
-                            selectedTags.includes(tag.id)
-                              ? "default"
-                              : "outline"
-                          }
-                          size="sm"
-                          onClick={() => handleTagClick(tag)}
-                          className="text-xs"
-                        >
-                          {tag.name} ({tag.count})
-                        </Button>
-                      ))}
-                    </div>
+                {sidebarLoading ? (
+                  <div className="space-y-4">
+                    {[...Array(5)].map((_, i) => (
+                      <div
+                        key={i}
+                        className="animate-pulse bg-gray-100 h-20 rounded"
+                      ></div>
+                    ))}
                   </div>
-                )} */}
-                {/* ✅ Extracted TagsFilter component */}
-                <TagsFilter
-                  randomTags={randomTags}
-                  selectedTags={selectedTags}
-                  onTagClick={handleTagClick}
-                />
+                ) : (
+                  recentPosts.map((post, index) => (
+                    <RecentPostCard key={post.id} post={post} index={index} />
+                  ))
+                )}
+
+                {!sidebarLoading && randomTags.length > 0 && (
+                  <TagsFilter
+                    randomTags={randomTags}
+                    selectedTags={selectedTags}
+                    onTagClick={handleTagClick}
+                  />
+                )}
               </div>
             </section>
           </div>
