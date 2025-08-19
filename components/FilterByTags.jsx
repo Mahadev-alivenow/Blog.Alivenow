@@ -17,7 +17,7 @@ export default function TagsFilter({ randomTags, selectedTags, onTagClick }) {
             variant={selectedTags.includes(tag.id) ? "default" : "outline"}
             size="sm"
             onClick={() => onTagClick(tag)}
-            className="text-xs hover:cursor-pointer"
+            className="text-xs hover:cursor-pointer hover:bg-[#E92628] hover:text-white transition-colors duration-200"
           >
             {tag.name} ({tag.count})
           </Button>

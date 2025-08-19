@@ -8,14 +8,14 @@ export default function Footer() {
     <footer className="bg-gray-900 text-white">
       {/* Main Footer Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-12 text-center md:text-left">
           {/* Left Section - Contact & Company Info */}
-          <div className="space-y-8">
+          <div className="space-y-24 md:col-span-3">
             <div>
-              <h3 className="text-2xl font-normal mb-4">Drop us a mail</h3>
+              <h3 className="text-4xl font-normal mb-4">Drop us a mail</h3>
               <a
                 href="mailto:contact@alivenow.in"
-                className="text-lg text-gray-300 hover:underline"
+                className="text-4xl text-gray-300 hover:underline"
               >
                 contact@alivenow.in
               </a>
@@ -28,20 +28,20 @@ export default function Footer() {
             </div>
 
             <div>
-              <h3 className="text-2xl font-normal mb-4">Registered Company:</h3>
+              <h3 className="text-4xl font-normal mb-4">Registered Company:</h3>
               <Link
                 href="https://3d360technologies.com/"
                 className="text-lg text-gray-300 space-y-1 underline hover:text-gray-400 transition-colors"
                 target="_blank"
               >
-                <p>3D360 Extended Reality</p>
-                <p>Technologies Pvt Ltd</p>
+                <p className="text-2xl">3D360 Extended Reality</p>
+                <p className="text-2xl">Technologies Pvt Ltd</p>
               </Link>
             </div>
           </div>
 
           {/* Center Section - Navigation Links */}
-          <div className="space-y-6">
+          <div className="space-y-6 ">
             <div className="space-y-4">
               <Link
                 href="https://www.alivenow.in/"
@@ -240,20 +240,20 @@ export default function Footer() {
             <a
               key={label}
               href={href}
-              className="w-10 h-10 bg-gray-700 rounded flex items-center justify-center hover:bg-gray-600 transition-colors duration-200"
+              className="md:w-15 md:h-15 rounded-2xl bg-gray-700  flex items-center justify-center hover:bg-gray-600 transition-colors duration-200 md:mr-20 mr-2 w-10 h-10 mx-auto md:mx-0"
               aria-label={label}
             >
-              <Icon className="h-5 w-5 text-gray-400" />
+              <Icon className="h-5 w-5 md:w-7 md:h-7 text-gray-400 " />
             </a>
           ))}
           {/* TikTok Icon */}
           <a
             href="https://www.tiktok.com/@alivenowinc"
-            className="w-10 h-10 bg-gray-700 rounded flex items-center justify-center hover:bg-gray-600 transition-colors duration-200"
+            className="md:w-15 md:h-15 rounded-2xl bg-gray-700  flex items-center justify-center hover:bg-gray-600 transition-colors duration-200 md:mr-20 mr-2 w-10 h-10 mx-auto md:mx-0"
             aria-label="TikTok"
           >
             <svg
-              className="h-5 w-5 text-gray-400"
+              className="h-5 w-5 md:w-7 md:h-7 text-gray-400"
               viewBox="0 0 24 24"
               fill="currentColor"
             >

@@ -96,7 +96,7 @@ export default function SearchModal({ isOpen, onClose, onSearch }) {
 
           {loading && (
             <div className="text-center py-4">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-red-600 mx-auto"></div>
             </div>
           )}
 
@@ -128,7 +128,7 @@ export default function SearchModal({ isOpen, onClose, onSearch }) {
                       )}
                       <div className="flex-1">
                         <h5
-                          className="font-medium line-clamp-1 hover:text-blue-600 transition-colors"
+                          className="font-medium line-clamp-1 hover:text-red-600 transition-colors"
                           dangerouslySetInnerHTML={{ __html: post.title }}
                         >
                           {/* {post.title} */}

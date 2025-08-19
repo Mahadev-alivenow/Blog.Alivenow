@@ -25,6 +25,7 @@ import { Calendar, User, Clock, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { gsap } from "gsap";
 import { stripHtml, formatDate } from "@/utils/helpers";
+import Image from "next/image";
 
 // Lazy load heavy components
 const SearchModal = dynamic(() => import("@/components/search-modal"), {
@@ -135,7 +136,7 @@ const PostCard = ({ post, index }) => {
               <Badge
                 key={tag.id}
                 variant="secondary"
-                className="text-xs hover:bg-amber-100 hover:text-amber-800 transition-colors duration-200"
+                className="text-xs hover:bg-red-100 hover:text-[#E92628] transition-colors duration-200"
               >
                 {tag.name}
               </Badge>
@@ -143,7 +144,7 @@ const PostCard = ({ post, index }) => {
           </div>
 
           <h3
-            className="text-xl font-bold line-clamp-2 group-hover:text-amber-700 transition-colors duration-200 leading-tight"
+            className="text-xl font-bold line-clamp-2 group-hover:text-[#E92628] transition-colors duration-200 leading-tight"
             dangerouslySetInnerHTML={{ __html: post.title }}
           />
         </CardHeader>
@@ -175,7 +176,7 @@ const PostCard = ({ post, index }) => {
 // Memoized Recent Post Component
 const RecentPostCard = ({ post, index }) => (
   <Link href={`/post/${post.slug}`}>
-    <Card className="p-0 hover:shadow-lg transition-all duration-300 cursor-pointer group overflow-hidden my-4 hover:border-l-green-500 hover:-translate-y-1 bg-white">
+    <Card className="p-0 hover:shadow-lg transition-all duration-300 cursor-pointer group overflow-hidden my-4 hover:border-l-[#E92628] hover:-translate-y-1 bg-white">
       <div className="flex">
         <LazyImage
           src={post.featuredImage.url}
@@ -185,7 +186,7 @@ const RecentPostCard = ({ post, index }) => (
         />
         <div className="p-4 flex-1">
           <h4
-            className="font-semibold line-clamp-2 mb-2 group-hover:text-green-600 transition-colors duration-200 text-sm leading-tight"
+            className="font-semibold line-clamp-2 mb-2 group-hover:text-[#E92628] transition-colors duration-200 text-sm leading-tight"
             dangerouslySetInnerHTML={{ __html: post.title }}
           />
           <div className="text-xs text-gray-500">{formatDate(post.date)}</div>
@@ -200,10 +201,8 @@ function PageLoadingFallback() {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center">
-          <Loader2 className="h-16 w-16 animate-spin text-amber-600 mx-auto" />
-          <p className="mt-4 text-gray-700 text-lg font-medium">
-            Loading amazing content...
-          </p>
+          <Loader2 className="h-16 w-16 animate-spin text-[#E92628] mx-auto" />
+          <p className="mt-4 text-gray-700 text-lg font-medium">Loading ...</p>
         </div>
       </div>
     </div>
@@ -226,7 +225,7 @@ function HomePageContent() {
   const heroRef = useRef(null);
   const postsGridRef = useRef(null);
 
-  const perPage = 6;
+  const perPage = 10;
 
   // Memoize random tags to prevent reshuffling
   const memoizedRandomTags = useMemo(() => {
@@ -353,9 +352,9 @@ function HomePageContent() {
         <BlogHeader onSearch={() => setShowSearchModal(true)} tags={tags} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center">
-            <Loader2 className="h-16 w-16 animate-spin text-amber-600 mx-auto" />
+            <Loader2 className="h-16 w-16 animate-spin text-[#E92628] mx-auto" />
             <p className="mt-4 text-gray-700 text-lg font-medium">
-              Loading your content...
+              Loading ...
             </p>
           </div>
         </div>
@@ -402,7 +401,7 @@ function HomePageContent() {
           variant="outline"
           onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
           disabled={currentPage === 1}
-          className="px-4 py-2 hover:bg-amber-50 hover:border-amber-300 transition-all duration-200 hover:cursor-pointer"
+          className="px-4 py-2 hover:bg-red-50 hover:border-red-700 transition-all duration-200 hover:cursor-pointer"
         >
           Previous
         </Button>
@@ -419,8 +418,8 @@ function HomePageContent() {
               onClick={() => setCurrentPage(page)}
               className={`px-3 py-2 min-w-[40px] transition-all duration-200 hover:cursor-pointer ${
                 currentPage === page
-                  ? "bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700"
-                  : "hover:bg-amber-50 hover:border-amber-300 hover:text-amber-700"
+                  ? "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700"
+                  : "hover:bg-red-50 hover:border-red-700 hover:text-red-700"
               }`}
             >
               {page}
@@ -432,7 +431,7 @@ function HomePageContent() {
           variant="outline"
           onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
           disabled={currentPage === totalPages}
-          className="px-4 py-2 hover:bg-amber-50 hover:border-amber-300 transition-all duration-200 hover:cursor-pointer"
+          className="px-4 py-2 hover:bg-red-50 hover:border-red-700 transition-all duration-200 hover:cursor-pointer"
         >
           Next
         </Button>
@@ -462,6 +461,14 @@ function HomePageContent() {
             {currentPage === 1 && !searchQuery && selectedTags.length === 0 && (
               <section className="mb-12" ref={heroRef}>
                 {/* Hero content can be added here */}
+                <Image
+                  src="/BlogBanner.png"
+                  alt="Alivenow Blog Banner Image"
+                  className="w-full object-cover rounded-lg mb-6"
+                  width={100}
+                  height={100}
+                  priority
+                />
               </section>
             )}
 
@@ -503,8 +510,8 @@ function HomePageContent() {
 
           <div className="lg:col-span-1">
             <section className="mb-8 sticky top-20">
-              <div className="flex items-center mb-6 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg">
-                <Clock className="h-6 w-6 mr-3 text-green-500" />
+              <div className="flex items-center mb-6 p-3 bg-gradient-to-r from-gray-50 to-red-50 rounded-lg">
+                <Clock className="h-6 w-6 mr-3 text-[#E92628]" />
                 <h3 className="text-lg font-bold text-gray-900">
                   Recent Posts
                 </h3>
