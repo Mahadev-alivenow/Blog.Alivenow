@@ -251,7 +251,7 @@ function HomePageContent() {
           variant="outline"
           onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
           disabled={currentPage === 1}
-          className="px-4 py-2 hover:bg-amber-50 hover:border-amber-300 hover:text-amber-700 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5"
+          className="px-4 py-2 hover:bg-amber-50 hover:border-amber-300 hover:text-amber-700 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 hover:cursor-pointer"
         >
           Previous
         </Button>
@@ -266,7 +266,7 @@ function HomePageContent() {
               key={`page-${page}-${index}`}
               variant={currentPage === page ? "default" : "outline"}
               onClick={() => setCurrentPage(page)}
-              className={`px-3 py-2 min-w-[40px] transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 ${
+              className={`px-3 py-2 min-w-[40px] transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 hover:cursor-pointer ${
                 currentPage === page
                   ? "bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 shadow-lg"
                   : "hover:bg-amber-50 hover:border-amber-300 hover:text-amber-700"
@@ -281,7 +281,7 @@ function HomePageContent() {
           variant="outline"
           onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
           disabled={currentPage === totalPages}
-          className="px-4 py-2 hover:bg-amber-50 hover:border-amber-300 hover:text-amber-700 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5"
+          className="px-4 py-2 hover:bg-amber-50 hover:border-amber-300 hover:text-amber-700 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 hover:cursor-pointer"
         >
           Next
         </Button>
