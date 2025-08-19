@@ -104,7 +104,7 @@ export default function Footer() {
 
           {/* Right Section - What We Do */}
           <div className="space-y-6">
-            <h3 className="text-lg font-medium mb-6">WHAT WE DO</h3>
+            <h3 className="text-xl font-bold mb-6">WHAT WE DO</h3>
             <div className="space-y-4">
               <Link
                 href="https://www.alivenow.in/GenerativeAI.php"

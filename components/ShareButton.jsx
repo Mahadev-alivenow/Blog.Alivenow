@@ -78,7 +78,7 @@ export default function ShareButton({
         variant={variant}
         size={size}
         onClick={handleShare}
-        className={`hover:bg-amber-50 hover:border-amber-300 hover:text-amber-700 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 bg-transparent ${className}`}
+        className={`hover:bg-amber-50 hover:cursor-pointer hover:border-red-300 hover:text-red-700 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 bg-transparent ${className}`}
       >
         <Share2 className="h-4 w-4 mr-2" />
         Share

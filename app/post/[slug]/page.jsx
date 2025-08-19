@@ -93,7 +93,11 @@ export default async function PostPage({ params }) {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
               <Link href="/">
-                <Button variant="ghost" size="sm">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="hover:bg-[#E92628] hover:text-white transition-colors duration-200 hover:cursor-pointer"
+                >
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to Blog
                 </Button>
@@ -292,8 +296,8 @@ export default async function PostPage({ params }) {
                 </div>
               </section> */}
               <section className="mb-8 sticky top-2">
-                <div className="flex items-center mb-6 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg">
-                  <Clock className="h-6 w-6 mr-3 text-green-500" />
+                <div className="flex items-center mb-6 p-3 bg-gradient-to-r from-gray-50 to-red-50 rounded-lg">
+                  <Clock className="h-6 w-6 mr-3 text-[#E92628]" />
                   <h3 className="text-lg font-bold text-gray-900">
                     Recent Posts
                   </h3>
@@ -302,7 +306,7 @@ export default async function PostPage({ params }) {
                 <div className="space-y-4">
                   {recentPosts.map((post, index) => (
                     <Link key={post.id} href={`/post/${post.slug}`}>
-                      <Card className="p-0 hover:shadow-xl transition-all duration-400 cursor-pointer group overflow-hidden my-4 hover:border-l-green-500 hover:-translate-y-1 hover:scale-[1.02] bg-white/90 backdrop-blur-sm">
+                      <Card className="p-0 hover:shadow-xl transition-all duration-400 cursor-pointer group overflow-hidden my-4 hover:border-l-red-500 hover:-translate-y-1 hover:scale-[1.02] bg-white/90 backdrop-blur-sm">
                         <div className="flex">
                           <div className="w-20 h-20 flex-shrink-0 relative overflow-hidden">
                             <img
@@ -314,16 +318,16 @@ export default async function PostPage({ params }) {
                               alt={post.featuredImage.alt || post.title}
                               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-br from-green-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <div className="absolute inset-0 bg-gradient-to-br from-red-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                           </div>
                           <div className="p-4 flex-1">
                             <h4
-                              className="font-semibold line-clamp-2 mb-2 group-hover:text-green-600 transition-colors duration-300 text-sm leading-tight"
+                              className="font-semibold line-clamp-2 mb-2 group-hover:text-red-600 transition-colors duration-300 text-sm leading-tight"
                               dangerouslySetInnerHTML={{ __html: post.title }}
                             >
                               {/* {post.title} */}
                             </h4>
-                            <div className="text-xs text-gray-500 group-hover:text-green-500 transition-colors duration-300">
+                            <div className="text-xs text-gray-500 group-hover:text-red-500 transition-colors duration-300">
                               {formatDate(post.date)}
                             </div>
                           </div>
