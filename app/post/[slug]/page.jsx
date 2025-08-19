@@ -62,7 +62,7 @@ export async function generateMetadata({ params }) {
 export default async function PostPage({ params }) {
   const [post, recentPosts] = await Promise.all([
     getPostBySlug(params.slug),
-    getRecentPosts(5),
+    getRecentPosts(7),
   ]);
 
   if (!post) {
@@ -110,10 +110,11 @@ export default async function PostPage({ params }) {
                 />
               </Link>
 
-              <Button variant="outline" size="sm">
+              {/* <Button variant="outline" size="sm">
                 <Share2 className="h-4 w-4 mr-2" />
                 Share
-              </Button>
+              </Button> */}
+              <ShareButton post={post} />
             </div>
           </div>
         </header>
@@ -145,7 +146,8 @@ export default async function PostPage({ params }) {
                 </div>
 
                 {/* Title */}
-                <h1 className="text-4xl font-bold text-gray-900 mb-4 leading-tight"
+                <h1
+                  className="text-4xl font-bold text-gray-900 mb-4 leading-tight"
                   dangerouslySetInnerHTML={{ __html: post.title }}
                 >
                   {/* {post.title} */}
@@ -315,8 +317,9 @@ export default async function PostPage({ params }) {
                             <div className="absolute inset-0 bg-gradient-to-br from-green-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                           </div>
                           <div className="p-4 flex-1">
-                            <h4 className="font-semibold line-clamp-2 mb-2 group-hover:text-green-600 transition-colors duration-300 text-sm leading-tight"
-                            dangerouslySetInnerHTML={{ __html: post.title }}
+                            <h4
+                              className="font-semibold line-clamp-2 mb-2 group-hover:text-green-600 transition-colors duration-300 text-sm leading-tight"
+                              dangerouslySetInnerHTML={{ __html: post.title }}
                             >
                               {/* {post.title} */}
                             </h4>

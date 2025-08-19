@@ -18,7 +18,7 @@ import { Calendar, User, TrendingUp, Clock, Eye } from "lucide-react";
 import Link from "next/link";
 import { gsap } from "gsap";
 import { stripHtml, formatDate } from "@/utils/helpers";
-
+import TagsFilter from "@/components/FilterByTags";
 function PageLoadingFallback() {
   return (
     <div className="min-h-screen bg-gray-50">
@@ -445,7 +445,7 @@ function HomePageContent() {
                 ))}
 
                 {/* Tags Filter */}
-                {randomTags.length > 0 && (
+                {/* {randomTags.length > 0 && (
                   <div className="py-4 border-t border-gray-100">
                     <div className="flex flex-wrap gap-2">
                       <span className="text-sm font-medium text-gray-700 mr-3">
@@ -468,7 +468,13 @@ function HomePageContent() {
                       ))}
                     </div>
                   </div>
-                )}
+                )} */}
+                {/* ✅ Extracted TagsFilter component */}
+                <TagsFilter
+                  randomTags={randomTags}
+                  selectedTags={selectedTags}
+                  onTagClick={handleTagClick}
+                />
               </div>
             </section>
           </div>
