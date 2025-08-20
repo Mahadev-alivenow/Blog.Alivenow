@@ -200,7 +200,7 @@ export default function PostClient({ post, recentPosts }) {
 
                 <div className="space-y-4">
                   {recentPosts.map((recentPost, index) => (
-                    <Link key={recentPost.id} href={`/post/${recentPost.slug}`}>
+                    <Link key={recentPost.id} href={`/${recentPost.slug}`}>
                       <Card
                         className="p-0 hover:shadow-xl transition-all duration-400 cursor-pointer group overflow-hidden my-4 hover:border-l-[#E92628] hover:border-b-[#E92628] hover:-translate-y-1 hover:scale-[1.02] bg-white/90 backdrop-blur-sm animate-fade-in"
                         style={{ animationDelay: `${index * 150}ms` }}

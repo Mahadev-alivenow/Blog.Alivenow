@@ -45,7 +45,7 @@ export async function generateMetadata({ params }) {
       images: post.featuredImage.url ? [post.featuredImage.url] : [],
     },
     alternates: {
-      canonical: `/post/${post.slug}`,
+      canonical: `/${post.slug}`,
     },
   };
 }
