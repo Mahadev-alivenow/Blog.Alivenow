@@ -43,6 +43,7 @@ function LazyImage({
   src,
   alt,
   className,
+  imgSize,
   aspectRatio = "aspect-video",
   priority = false,
 }) {
@@ -86,7 +87,7 @@ function LazyImage({
         <img
           src={imageSrc}
           alt={alt}
-          className={`w-full h-full object-cover transition-all duration-700 ${
+          className={`w-full h-full ${imgSize} transition-all duration-700 ${
             isLoaded ? "opacity-100 group-hover:scale-110" : "opacity-0"
           }`}
           onLoad={() => setIsLoaded(true)}
@@ -122,11 +123,12 @@ const PostCard = ({ post, index }) => {
     <Link href={`/post/${post.slug}`}>
       <Card
         ref={cardRef}
-        className="overflow-hidden hover:shadow-2xl transition-all duration-300 group cursor-pointer border-0 shadow-lg hover:-translate-y-1 hover:scale-[1.01] bg-white"
+        className="eachcard overflow-hidden hover:shadow-2xl transition-all duration-300 group cursor-pointer border-0 shadow-lg hover:-translate-y-1 hover:scale-[1.01] bg-white pt-0"
       >
         <LazyImage
           src={post.featuredImage.url}
           alt={post.featuredImage.alt}
+          imgSize={"object-fill"}
           priority={index < 2} // Priority load for first 2 images
         />
 
@@ -176,12 +178,13 @@ const PostCard = ({ post, index }) => {
 // Memoized Recent Post Component
 const RecentPostCard = ({ post, index }) => (
   <Link href={`/post/${post.slug}`}>
-    <Card className="p-0 hover:shadow-lg transition-all duration-300 cursor-pointer group overflow-hidden my-4 hover:border-l-[#E92628] hover:-translate-y-1 bg-white">
+    <Card className="p-0 hover:shadow-lg transition-all duration-300 cursor-pointer group overflow-hidden my-4 hover:border-l-[#E92628] hover:border-b-[#E92628] hover:-translate-y-1 bg-white">
       <div className="flex">
         <LazyImage
           src={post.featuredImage.url}
           alt={post.featuredImage.alt || post.title}
           className="w-20 h-20 flex-shrink-0"
+          imgSize="object-cover"
           aspectRatio=""
         />
         <div className="p-4 flex-1">

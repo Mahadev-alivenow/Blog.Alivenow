@@ -5,13 +5,13 @@ export function JsonLd() {
     name: "AliveNow",
     description:
       "Discover the latest insights, tutorials, and stories from our community of writers.",
-    url: process.env.NEXT_PUBLIC_SITE_URL || "https://alivenow.com",
+    url: process.env.NEXT_PUBLIC_SITE_URL || "https://blog.alivenow.in",
     potentialAction: {
       "@type": "SearchAction",
       target: {
         "@type": "EntryPoint",
         urlTemplate: `${
-          process.env.NEXT_PUBLIC_SITE_URL || "https://alivenow.com"
+          process.env.NEXT_PUBLIC_SITE_URL || "https://blog.alivenow.in"
         }/?search={search_term_string}`,
       },
       "query-input": "required name=search_term_string",
@@ -19,11 +19,11 @@ export function JsonLd() {
     publisher: {
       "@type": "Organization",
       name: "AliveNow",
-      url: process.env.NEXT_PUBLIC_SITE_URL || "https://alivenow.com",
+      url: process.env.NEXT_PUBLIC_SITE_URL || "https://blog.alivenow.in",
       logo: {
         "@type": "ImageObject",
         url: `${
-          process.env.NEXT_PUBLIC_SITE_URL || "https://alivenow.com"
+          process.env.NEXT_PUBLIC_SITE_URL || "https://blog.alivenow.in"
         }/logo.png`,
       },
     },
@@ -34,13 +34,13 @@ export function JsonLd() {
     "@type": "Blog",
     name: "alivenow",
     description: "Latest insights, tutorials, and stories",
-    url: process.env.NEXT_PUBLIC_SITE_URL || "https://alivenow.com",
+    url: process.env.NEXT_PUBLIC_SITE_URL || "https://blog.alivenow.in",
     inLanguage: "en-US",
     publisher: {
       "@type": "Organization",
       name: "alivenow",
     },
-  }
+  };
 
   return (
     <>
