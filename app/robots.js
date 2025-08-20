@@ -1,7 +1,7 @@
 export default function robots() {
   const baseUrl =
     process.env.NEXT_PUBLIC_SITE_URL ||
-    "https://clownfish-app-v6pxe.ondigitalocean.app";
+    "https://blog.alivenow.in"; // Fallback URL if not set
 
   return {
     rules: {
