@@ -83,7 +83,9 @@ export default function PostClient({ post, recentPosts }) {
               </Link>
 
               <div className="animate-slide-in-right">
-                <ShareButton post={post} />
+                {/* <div className="relative z-50">
+                  <ShareButton post={post} />
+                </div> */}
               </div>
             </div>
           </div>
@@ -178,7 +180,9 @@ export default function PostClient({ post, recentPosts }) {
                   </div>
 
                   <div className="flex space-x-2">
-                    <ShareButton post={post} />
+                    <div className="relative z-50">
+                      <ShareButton post={post} />
+                    </div>
                   </div>
                 </div>
               </footer>
@@ -207,6 +211,7 @@ export default function PostClient({ post, recentPosts }) {
                               src={
                                 recentPost.featuredImage.url ||
                                 "/placeholder.svg?height=80&width=80&query=recent blog post thumbnail" ||
+                                "/placeholder.svg" ||
                                 "/placeholder.svg"
                               }
                               alt={

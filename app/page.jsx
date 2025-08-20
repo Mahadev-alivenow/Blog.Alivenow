@@ -120,7 +120,7 @@ const PostCard = ({ post, index }) => {
   }, [index]);
 
   return (
-    <Link href={`/post/${post.slug}`}>
+    <Link href={`/${post.slug}`}>
       <Card
         ref={cardRef}
         className="eachcard overflow-hidden hover:shadow-2xl transition-all duration-300 group cursor-pointer border-0 shadow-lg hover:-translate-y-1 hover:scale-[1.01] bg-white pt-0"
@@ -177,7 +177,7 @@ const PostCard = ({ post, index }) => {
 
 // Memoized Recent Post Component
 const RecentPostCard = ({ post, index }) => (
-  <Link href={`/post/${post.slug}`}>
+  <Link href={`/${post.slug}`}>
     <Card className="p-0 hover:shadow-lg transition-all duration-300 cursor-pointer group overflow-hidden my-4 hover:border-l-[#E92628] hover:border-b-[#E92628] hover:-translate-y-1 bg-white">
       <div className="flex">
         <LazyImage

@@ -57,7 +57,9 @@ export function PostJsonLd({ post }) {
     "@type": "BlogPosting",
     headline: post.title,
     description: post.excerpt.replace(/<[^>]*>/g, "").substring(0, 160),
-    image: post.featuredImage.url || `${process.env.NEXT_PUBLIC_SITE_URL}/og-image.jpg`,
+    image:
+      post.featuredImage.url ||
+      `${process.env.NEXT_PUBLIC_SITE_URL}/og-image.jpg`,
     datePublished: post.date,
     dateModified: post.modified,
     author: {
@@ -75,14 +77,14 @@ export function PostJsonLd({ post }) {
     },
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/post/${post.slug}`,
+      "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/${post.slug}`,
     },
     keywords: post.tags.map((tag) => tag.name).join(", "),
     articleSection: post.tags.length > 0 ? post.tags[0].name : "General",
     wordCount: post.content.replace(/<[^>]*>/g, "").split(/\s+/).length,
     commentCount: post.commentCount,
-    url: `${process.env.NEXT_PUBLIC_SITE_URL}/post/${post.slug}`,
-  }
+    url: `${process.env.NEXT_PUBLIC_SITE_URL}/${post.slug}`,
+  };
 
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(postSchema) }} />
 }

@@ -111,7 +111,7 @@ export default function SearchModal({ isOpen, onClose, onSearch }) {
                   className="p-3 hover:shadow-md transition-all duration-200 cursor-pointer"
                 >
                   <Link
-                    href={`/post/${post.slug}`}
+                    href={`/${post.slug}`}
                     onClick={() => {
                       onClose();
                       setQuery("");

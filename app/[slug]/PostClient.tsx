@@ -1,8 +1,5 @@
 "use client";
 
-import { getPostBySlug, getRecentPosts } from "@/lib/wordpress";
-import { PostJsonLd } from "@/components/json-ld";
-import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,6 +9,7 @@ import PostAnalytics from "@/components/post-analytics";
 import Image from "next/image";
 import Footer from "@/components/footer";
 import ShareButton from "@/components/ShareButton";
+import { PostJsonLd } from "@/components/json-ld";
 
 function PostSkeleton() {
   return (
@@ -39,38 +37,7 @@ function PostSkeleton() {
   );
 }
 
-function SidebarSkeleton() {
-  return (
-    <div className="animate-pulse space-y-4">
-      <div className="h-8 bg-gray-200 rounded w-32 mb-6"></div>
-      {[...Array(4)].map((_, i) => (
-        <div key={i} className="flex">
-          <div className="w-20 h-20 bg-gray-200 rounded"></div>
-          <div className="p-4 flex-1 space-y-2">
-            <div className="h-4 bg-gray-200 rounded"></div>
-            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-            <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-export default async function PostClientPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
-  const [post, recentPosts] = await Promise.all([
-    getPostBySlug(params.slug),
-    getRecentPosts(7),
-  ]);
-
-  if (!post) {
-    notFound();
-  }
-
+export default function PostClient({ post, recentPosts }) {
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -91,14 +58,14 @@ export default async function PostClientPage({
 
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
-        <header className="bg-white shadow-sm border-b">
+        <header className="bg-white shadow-sm border-b sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16 animate-fade-in">
               <Link href="/">
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="hover:bg-[#E92628] hover:text-white transition-all duration-300 hover:cursor-pointer hover:scale-105 hover:shadow-md"
+                  className="hover:bg-[#E92628] hover:text-white transition-all duration-300 hover:cursor-pointer hover:scale-105 hover:shadow-md group"
                 >
                   <ArrowLeft className="h-4 w-4 mr-2 transition-transform duration-300 group-hover:-translate-x-1" />
                   Back to Blog
@@ -116,7 +83,9 @@ export default async function PostClientPage({
               </Link>
 
               <div className="animate-slide-in-right">
-                <ShareButton post={post} />
+                <div className="relative z-50">
+                  <ShareButton post={post} />
+                </div>
               </div>
             </div>
           </div>
@@ -211,7 +180,9 @@ export default async function PostClientPage({
                   </div>
 
                   <div className="flex space-x-2">
-                    <ShareButton post={post} />
+                    <div className="relative z-50">
+                      <ShareButton post={post} />
+                    </div>
                   </div>
                 </div>
               </footer>
@@ -219,7 +190,7 @@ export default async function PostClientPage({
 
             {/* Sidebar */}
             <aside className="lg:col-span-1 animate-slide-in-right animation-delay-300">
-              <section className="mb-8 sticky top-2">
+              <section className="mb-8 sticky top-18">
                 <div className="flex items-center mb-6 p-3 bg-gradient-to-r from-gray-50 to-red-50 rounded-lg hover:from-red-50 hover:to-red-100 transition-all duration-300 hover:shadow-md">
                   <Clock className="h-6 w-6 mr-3 text-[#E92628] animate-pulse" />
                   <h3 className="text-lg font-bold text-gray-900">
@@ -228,8 +199,8 @@ export default async function PostClientPage({
                 </div>
 
                 <div className="space-y-4">
-                  {recentPosts.map((post, index) => (
-                    <Link key={post.id} href={`/${post.slug}`}>
+                  {recentPosts.map((recentPost, index) => (
+                    <Link key={recentPost.id} href={`/post/${recentPost.slug}`}>
                       <Card
                         className="p-0 hover:shadow-xl transition-all duration-400 cursor-pointer group overflow-hidden my-4 hover:border-l-[#E92628] hover:border-b-[#E92628] hover:-translate-y-1 hover:scale-[1.02] bg-white/90 backdrop-blur-sm animate-fade-in"
                         style={{ animationDelay: `${index * 150}ms` }}
@@ -238,12 +209,14 @@ export default async function PostClientPage({
                           <div className="w-20 h-20 flex-shrink-0 relative overflow-hidden">
                             <img
                               src={
-                                post.featuredImage.url ||
+                                recentPost.featuredImage.url ||
                                 "/placeholder.svg?height=80&width=80&query=recent blog post thumbnail" ||
                                 "/placeholder.svg" ||
                                 "/placeholder.svg"
                               }
-                              alt={post.featuredImage.alt || post.title}
+                              alt={
+                                recentPost.featuredImage.alt || recentPost.title
+                              }
                               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                               loading="lazy"
                             />
@@ -252,10 +225,12 @@ export default async function PostClientPage({
                           <div className="p-4 flex-1">
                             <h4
                               className="font-semibold line-clamp-2 mb-2 group-hover:text-[#E92628] transition-colors duration-300 text-sm leading-tight"
-                              dangerouslySetInnerHTML={{ __html: post.title }}
+                              dangerouslySetInnerHTML={{
+                                __html: recentPost.title,
+                              }}
                             />
                             <div className="text-xs text-gray-500 group-hover:text-[#E92628] transition-colors duration-300">
-                              {formatDate(post.date)}
+                              {formatDate(recentPost.date)}
                             </div>
                           </div>
                         </div>
