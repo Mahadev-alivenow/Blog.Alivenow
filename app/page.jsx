@@ -461,19 +461,19 @@ function HomePageContent() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           <div className="lg:col-span-3">
-            {/* {currentPage === 1 && !searchQuery && selectedTags.length === 0 && ( */}
-            <section className="mb-12" ref={heroRef}>
-              {/* Hero content can be added here */}
-              <Image
-                src="/BlogBanner.png"
-                alt="Alivenow Blog Banner Image"
-                className="w-full object-cover rounded-lg mb-6"
-                width={100}
-                height={100}
-                priority
-              />
-            </section>
-            {/* )} */}
+            {currentPage === 1 && !searchQuery && selectedTags.length === 0 && (
+              <section className="mb-12" ref={heroRef}>
+                {/* Hero content can be added here */}
+                <Image
+                  src="/BlogBanner.png"
+                  alt="Alivenow Blog Banner Image"
+                  className="w-full object-cover rounded-lg mb-6"
+                  width={100}
+                  height={100}
+                  priority
+                />
+              </section>
+            )}
 
             <section>
               <div className="flex items-center justify-between mb-6">
