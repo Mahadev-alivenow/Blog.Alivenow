@@ -8,7 +8,7 @@ import {
   getTrendingPosts,
   getRecentPosts,
 } from "@/lib/wordpress";
-import { Loader2 } from "lucide-react";
+import { Loader2, Clock } from "lucide-react";
 import Image from "next/image";
 import { formatDate } from "@/utils/helpers";
 
@@ -89,7 +89,9 @@ export default async function HomePage() {
           <div className="lg:col-span-1">
             <section className="mb-8 sticky top-20">
               <div className="flex items-center mb-6 p-3 bg-gradient-to-r from-gray-50 to-red-50 rounded-lg">
-                <div className="h-6 w-6 mr-3 text-[#E92628]">🕒</div>
+                {/* <div className="h-6 w-6 mr-3 text-[#E92628]">🕒</div> */}
+                <Clock className="h-6 w-6 mr-3 text-[#E92628] " />
+
                 <h3 className="text-lg font-bold text-gray-900">
                   Recent Posts
                 </h3>
