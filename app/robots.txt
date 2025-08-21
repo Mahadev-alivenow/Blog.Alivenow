@@ -10,4 +10,4 @@ Allow: /favicon.ico
 Allow: /BlogBanner.png
 
 # Sitemap
-Sitemap: ${process.env.NEXT_PUBLIC_SITE_URL || 'https://blog.alivenow.in/'}/sitemap.xml
+Sitemap: ${process.env.NEXT_PUBLIC_SITE_URL || 'https://blog.alivenow.in'}/sitemap.xml
