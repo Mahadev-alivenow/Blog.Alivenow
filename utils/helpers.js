@@ -63,3 +63,14 @@ export function generateSlug(title) {
     .replace(/-+/g, "-")
     .trim("-");
 }
+
+
+
+
+export function getReadingTime(content) {
+  if (!content) return 0;
+  
+  const wordsPerMinute = 200;
+  const words = stripHtml(content).split(/\s+/).length;
+  return Math.ceil(words / wordsPerMinute);
+}

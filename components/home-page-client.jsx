@@ -2,15 +2,16 @@
 
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import dynamic from "next/dynamic";
+import BlogHeader from "@/components/blog-header";
+import Footer from "@/components/footer";
+import PostsGrid from "@/components/posts-grid";
+import Sidebar from "@/components/sidebar";
 import { getPosts } from "@/lib/wordpress";
 import { trackSearch, trackTagClick, trackEvent } from "@/components/analytics";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Calendar, User, Loader2 } from "lucide-react";
-import Link from "next/link";
+import { Loader2 } from "lucide-react";
+import Image from "next/image";
 import { gsap } from "gsap";
-import { formatDate } from "@/utils/helpers";
+import { useRouter, useSearchParams } from "next/navigation";
 
 // Lazy load heavy components
 const SearchModal = dynamic(() => import("@/components/search-modal"), {
@@ -18,228 +19,107 @@ const SearchModal = dynamic(() => import("@/components/search-modal"), {
   ssr: false,
 });
 
-const TagsFilter = dynamic(() => import("@/components/FilterByTags"), {
-  loading: () => <div className="animate-pulse bg-gray-100 h-20 rounded"></div>,
-  ssr: false,
-});
+export default function HomePageClient({ serverData }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-// Optimized Image Component with Lazy Loading
-function LazyImage({
-  src,
-  alt,
-  className,
-  imgSize,
-  aspectRatio = "aspect-video",
-  priority = false,
-}) {
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isInView, setIsInView] = useState(priority);
-  const imgRef = useRef(null);
-  const [imageSrc, setImageSrc] = useState(priority ? src : null);
-
-  useEffect(() => {
-    if (priority) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsInView(true);
-          setImageSrc(src);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: "50px" }
-    );
-
-    if (imgRef.current) {
-      observer.observe(imgRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, [src, priority]);
-
-  return (
-    <div
-      ref={imgRef}
-      className={`${aspectRatio} overflow-hidden relative ${className}`}
-    >
-      {!isLoaded && (
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 animate-pulse flex items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
-        </div>
-      )}
-      {imageSrc && (
-        <img
-          src={imageSrc || "/placeholder.svg"}
-          alt={alt}
-          className={`w-full h-full ${imgSize} transition-all duration-700 ${
-            isLoaded ? "opacity-100 group-hover:scale-110" : "opacity-0"
-          }`}
-          onLoad={() => setIsLoaded(true)}
-          loading={priority ? "eager" : "lazy"}
-        />
-      )}
-    </div>
-  );
-}
-
-// Memoized Post Card Component
-const PostCard = ({ post, index }) => {
-  const cardRef = useRef(null);
-
-  useEffect(() => {
-    if (cardRef.current) {
-      // Simplified animation with better performance
-      gsap.fromTo(
-        cardRef.current,
-        { opacity: 0, y: 20 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.4,
-          delay: index * 0.05,
-          ease: "power2.out",
-        }
-      );
-    }
-  }, [index]);
-
-  return (
-    <Link href={`/${post.slug}`}>
-      <Card
-        ref={cardRef}
-        className="eachcard overflow-hidden hover:shadow-2xl transition-all duration-300 group cursor-pointer border-0 shadow-lg hover:-translate-y-1 hover:scale-[1.01] bg-white pt-0"
-      >
-        <LazyImage
-          src={post.featuredImage.url}
-          alt={post.featuredImage.alt}
-          imgSize={"object-fill"}
-          priority={index < 2} // Priority load for first 2 images
-        />
-
-        <CardHeader className="pb-3">
-          <div className="flex flex-wrap gap-2 mb-3">
-            {post.tags.slice(0, 3).map((tag) => (
-              <Badge
-                key={tag.id}
-                variant="secondary"
-                className="text-xs hover:bg-red-100 hover:text-[#E92628] transition-colors duration-200"
-              >
-                {tag.name}
-              </Badge>
-            ))}
-          </div>
-
-          <h3
-            className="text-xl font-bold line-clamp-2 group-hover:text-[#E92628] transition-colors duration-200 leading-tight"
-            dangerouslySetInnerHTML={{ __html: post.title }}
-          />
-        </CardHeader>
-
-        <CardContent>
-          <p
-            className="text-gray-600 mb-4 line-clamp-3 group-hover:text-gray-700 transition-colors duration-200"
-            dangerouslySetInnerHTML={{ __html: post.excerpt }}
-          />
-
-          <div className="flex items-center justify-between text-sm text-gray-500">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center">
-                <User className="h-4 w-4 mr-1" />
-                Author - AliveNow
-              </div>
-              <div className="flex items-center">
-                <Calendar className="h-4 w-4 mr-1" />
-                {formatDate(post.date)}
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </Link>
-  );
-};
-
-export default function HomePageClient({ initialData }) {
-  const [posts, setPosts] = useState(initialData.initialPosts);
+  const [posts, setPosts] = useState(serverData.initialPosts);
   const [loading, setLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(initialData.totalPages);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedTags, setSelectedTags] = useState([]);
-  const [tags] = useState(initialData.tags);
+  const [currentPage, setCurrentPage] = useState(serverData.initialPage);
+  const [totalPages, setTotalPages] = useState(serverData.totalPages);
+  const [searchQuery, setSearchQuery] = useState(serverData.initialSearch);
+  const [selectedTags, setSelectedTags] = useState(
+    serverData.initialSelectedTags
+  );
   const [showSearchModal, setShowSearchModal] = useState(false);
-  const [randomTags, setRandomTags] = useState([]);
-  const postsGridRef = useRef(null);
+  const heroRef = useRef(null);
 
   const perPage = 10;
 
   // Memoize random tags to prevent reshuffling
-  const memoizedRandomTags = useMemo(() => {
-    if (tags.length > 0) {
-      const shuffled = [...tags].sort(() => 0.5 - Math.random());
-      return shuffled.slice(0, 15);
+  const randomTags = useMemo(() => {
+    if (serverData.allTags.length > 0) {
+      const shuffled = [...serverData.allTags].sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, 10);
     }
     return [];
-  }, [tags]);
+  }, [serverData.allTags]);
 
-  useEffect(() => {
-    setRandomTags(memoizedRandomTags);
-  }, [memoizedRandomTags]);
+  // Update URL when filters change
+  const updateURL = useCallback(
+    (page, search, tags) => {
+      const params = new URLSearchParams();
+      if (page > 1) params.set("page", page.toString());
+      if (search) params.set("search", search);
+      if (tags.length > 0) params.set("tags", tags.join(","));
 
-  useEffect(() => {
-    if (currentPage > 1 || searchQuery || selectedTags.length > 0) {
-      loadFilteredData();
-    }
-  }, [currentPage, searchQuery, selectedTags]);
+      const queryString = params.toString();
+      const newUrl = queryString ? `?${queryString}` : "/";
+      router.push(newUrl, { scroll: false });
+    },
+    [router]
+  );
 
-  const loadFilteredData = async () => {
+  // Load posts when filters change (client-side navigation)
+  const loadPosts = useCallback(async (page, search, tags) => {
     setLoading(true);
     try {
       const postsData = await getPosts({
-        page: currentPage,
-        perPage: perPage,
-        search: searchQuery,
-        tags: selectedTags,
+        page,
+        perPage,
+        search,
+        tags,
       });
 
       setPosts(postsData.posts);
       setTotalPages(postsData.totalPages);
 
-      if (searchQuery) {
-        trackSearch(searchQuery, postsData.totalPosts);
+      if (search) {
+        trackSearch(search, postsData.totalPosts);
       }
     } catch (error) {
-      console.error("Error loading filtered data:", error);
+      console.error("Error loading posts:", error);
       setPosts([]);
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleSearch = useCallback((query) => {
-    setSearchQuery(query);
-    setCurrentPage(1);
-    setShowSearchModal(false);
-    if (query) {
-      trackEvent("search_initiated", { search_term: query });
-    }
   }, []);
 
+  // Handle search
+  const handleSearch = useCallback(
+    (query) => {
+      setSearchQuery(query);
+      setCurrentPage(1);
+      setShowSearchModal(false);
+      updateURL(1, query, selectedTags);
+      loadPosts(1, query, selectedTags);
+
+      if (query) {
+        trackEvent("search_initiated", { search_term: query });
+      }
+    },
+    [selectedTags, updateURL, loadPosts]
+  );
+
+  // Handle tag filtering
   const handleTagFilter = useCallback(
     (tagIds) => {
       setSelectedTags(tagIds);
       setCurrentPage(1);
+      updateURL(1, searchQuery, tagIds);
+      loadPosts(1, searchQuery, tagIds);
+
       tagIds.forEach((tagId) => {
-        const tag = tags.find((t) => t.id === tagId);
+        const tag = serverData.allTags.find((t) => t.id === tagId);
         if (tag) {
           trackTagClick(tag.name, tag.id);
         }
       });
     },
-    [tags]
+    [searchQuery, serverData.allTags, updateURL, loadPosts]
   );
 
+  // Handle tag click
   const handleTagClick = useCallback(
     (tag) => {
       const newSelectedTags = selectedTags.includes(tag.id)
@@ -247,98 +127,43 @@ export default function HomePageClient({ initialData }) {
         : [...selectedTags, tag.id];
 
       setSelectedTags(newSelectedTags);
+      setCurrentPage(1);
+      updateURL(1, searchQuery, newSelectedTags);
+      loadPosts(1, searchQuery, newSelectedTags);
     },
-    [selectedTags]
+    [selectedTags, searchQuery, updateURL, loadPosts]
   );
 
-  if (loading && posts.length === 0) {
-    return (
-      <div className="text-center">
-        <Loader2 className="h-16 w-16 animate-spin text-[#E92628] mx-auto" />
-        <p className="mt-4 text-gray-700 text-lg font-medium">Loading ...</p>
-      </div>
-    );
-  }
+  // Handle pagination
+  const handlePageChange = useCallback(
+    (page) => {
+      setCurrentPage(page);
+      updateURL(page, searchQuery, selectedTags);
+      loadPosts(page, searchQuery, selectedTags);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+    [searchQuery, selectedTags, updateURL, loadPosts]
+  );
 
-  const renderPagination = () => {
-    if (totalPages <= 1) return null;
-
-    const getVisiblePages = () => {
-      const delta = 2;
-      const range = [];
-      const rangeWithDots = [];
-
-      for (
-        let i = Math.max(2, currentPage - delta);
-        i <= Math.min(totalPages - 1, currentPage + delta);
-        i++
-      ) {
-        range.push(i);
-      }
-
-      if (currentPage - delta > 2) {
-        rangeWithDots.push(1, "...");
-      } else {
-        rangeWithDots.push(1);
-      }
-
-      rangeWithDots.push(...range);
-
-      if (currentPage + delta < totalPages - 1) {
-        rangeWithDots.push("...", totalPages);
-      } else {
-        rangeWithDots.push(totalPages);
-      }
-
-      return rangeWithDots;
-    };
-
-    return (
-      <div className="flex justify-center items-center space-x-2 mt-8">
-        <Button
-          variant="outline"
-          onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-          disabled={currentPage === 1}
-          className="px-4 py-2 hover:bg-red-50 hover:border-red-700 transition-all duration-200 hover:cursor-pointer"
-        >
-          Previous
-        </Button>
-
-        {getVisiblePages().map((page, index) =>
-          page === "..." ? (
-            <span key={`dots-${index}`} className="px-3 py-2 text-gray-500">
-              ...
-            </span>
-          ) : (
-            <Button
-              key={`page-${page}-${index}`}
-              variant={currentPage === page ? "default" : "outline"}
-              onClick={() => setCurrentPage(page)}
-              className={`px-3 py-2 min-w-[40px] transition-all duration-200 hover:cursor-pointer ${
-                currentPage === page
-                  ? "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700"
-                  : "hover:bg-red-50 hover:border-red-700 hover:text-red-700"
-              }`}
-            >
-              {page}
-            </Button>
-          )
-        )}
-
-        <Button
-          variant="outline"
-          onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-          disabled={currentPage === totalPages}
-          className="px-4 py-2 hover:bg-red-50 hover:border-red-700 transition-all duration-200 hover:cursor-pointer"
-        >
-          Next
-        </Button>
-      </div>
-    );
-  };
+  // Simplified hero animation
+  useEffect(() => {
+    if (heroRef.current) {
+      gsap.fromTo(
+        heroRef.current,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }
+      );
+    }
+  }, []);
 
   return (
-    <>
+    <div className="min-h-screen bg-gray-50">
+      <BlogHeader
+        onSearch={() => setShowSearchModal(true)}
+        onTagFilter={handleTagFilter}
+        tags={serverData.allTags}
+      />
+
       {showSearchModal && (
         <SearchModal
           isOpen={showSearchModal}
@@ -347,48 +172,65 @@ export default function HomePageClient({ initialData }) {
         />
       )}
 
-      <section>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-3xl font-bold text-gray-900">
-            {searchQuery
-              ? `Search Results for "${searchQuery}"`
-              : "Latest Posts"}
-          </h2>
-          <div className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-            Showing {posts.length} posts
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          <div className="lg:col-span-3">
+            <section className="mb-12" ref={heroRef}>
+              <Image
+                src="/BlogBanner.png"
+                alt="Alivenow Blog Banner Image"
+                className="w-full object-cover rounded-lg mb-6"
+                width={800}
+                height={200}
+                priority
+              />
+            </section>
+
+            <section>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-3xl font-bold text-gray-900">
+                  {searchQuery
+                    ? `Search Results for "${searchQuery}"`
+                    : "Latest Posts"}
+                </h2>
+                <div className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                  Showing {posts.length} posts
+                </div>
+              </div>
+
+              {loading ? (
+                <div className="text-center py-12">
+                  <Loader2 className="h-12 w-12 animate-spin text-[#E92628] mx-auto" />
+                  <p className="mt-4 text-gray-600">Loading posts...</p>
+                </div>
+              ) : (
+                <PostsGrid
+                  posts={posts}
+                  searchQuery={searchQuery}
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              )}
+            </section>
+          </div>
+
+          <div className="lg:col-span-1">
+            <Sidebar
+              recentPosts={serverData.recentPosts}
+              randomTags={randomTags}
+              selectedTags={selectedTags}
+              onTagClick={handleTagClick}
+            />
           </div>
         </div>
+      </main>
 
-        {posts.length > 0 ? (
-          <div
-            className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8"
-            ref={postsGridRef}
-          >
-            {posts.map((post, index) => (
-              <PostCard key={post.id} post={post} index={index} />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <p className="text-gray-600 text-lg">No posts found.</p>
-            {searchQuery && (
-              <p className="text-gray-500 mt-2">
-                Try adjusting your search terms.
-              </p>
-            )}
-          </div>
-        )}
-
-        {renderPagination()}
-      </section>
-
-      {randomTags.length > 0 && (
-        <TagsFilter
-          randomTags={randomTags}
-          selectedTags={selectedTags}
-          onTagClick={handleTagClick}
-        />
-      )}
-    </>
+      <Footer
+        trendingPosts={serverData.trendingPosts}
+        recentPosts={serverData.recentPosts}
+        tags={serverData.allTags}
+      />
+    </div>
   );
 }
