@@ -65,6 +65,7 @@ export default function Sidebar({
   randomTags,
   selectedTags,
   onTagClick,
+  onClear, // ✅ accept onClear from parent
 }) {
   return (
     <section className="mb-8 sticky top-20">
@@ -94,9 +95,11 @@ export default function Sidebar({
             randomTags={randomTags}
             selectedTags={selectedTags}
             onTagClick={onTagClick}
+            onClear={onClear} // ✅ use parent's handler
           />
         )}
       </div>
     </section>
   );
 }
+  

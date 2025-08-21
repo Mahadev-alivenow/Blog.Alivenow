@@ -22,7 +22,7 @@ const SearchModal = dynamic(() => import("@/components/search-modal"), {
 export default function HomePageClient({ serverData }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-
+  
   const [posts, setPosts] = useState(serverData.initialPosts);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(serverData.initialPage);
@@ -37,13 +37,22 @@ export default function HomePageClient({ serverData }) {
   const perPage = 10;
 
   // Memoize random tags to prevent reshuffling
-  const randomTags = useMemo(() => {
-    if (serverData.allTags.length > 0) {
-      const shuffled = [...serverData.allTags].sort(() => 0.5 - Math.random());
-      return shuffled.slice(0, 10);
-    }
-    return [];
-  }, [serverData.allTags]);
+  // const randomTags = useMemo(() => {
+  //   if (serverData.allTags.length > 0) {
+  //     const shuffled = [...serverData.allTags].sort(() => 0.5 - Math.random());
+  //     return shuffled.slice(0, 10);
+  //   }
+  //   return [];
+  // }, [serverData.allTags]);
+  // Generate random tags only once per page load
+  const randomTagsRef = useRef(null);
+
+  if (!randomTagsRef.current && serverData.allTags.length > 0) {
+    const shuffled = [...serverData.allTags].sort(() => 0.5 - Math.random());
+    randomTagsRef.current = shuffled.slice(0, 10);
+  }
+
+  const randomTags = randomTagsRef.current || [];
 
   // Update URL when filters change
   const updateURL = useCallback(
@@ -221,6 +230,11 @@ export default function HomePageClient({ serverData }) {
               randomTags={randomTags}
               selectedTags={selectedTags}
               onTagClick={handleTagClick}
+              onClear={() => {
+                setSelectedTags([]); // reset tags
+                loadPosts(1, searchQuery, []); // also reload posts with no filters
+                updateURL(1, searchQuery, []);
+              }}
             />
           </div>
         </div>
