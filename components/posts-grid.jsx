@@ -127,7 +127,7 @@ const PostCard = ({ post, index }) => {
             dangerouslySetInnerHTML={{ __html: post.excerpt }}
           /> */}
           <div
-            className="prose prose-gray max-w-none mb-4 line-clamp-3 group-hover:prose-red"
+            className="prose font-body prose-gray max-w-none mb-4 line-clamp-3 group-hover:prose-red"
             dangerouslySetInnerHTML={{ __html: post.excerpt }}
           />
 

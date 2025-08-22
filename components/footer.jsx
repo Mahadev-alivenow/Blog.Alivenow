@@ -12,10 +12,12 @@ export default function Footer() {
           {/* Left Section - Contact & Company Info */}
           <div className="space-y-24 md:col-span-3">
             <div>
-              <h3 className="text-4xl font-normal mb-4">Drop us a mail</h3>
+              <div className="text-4xl  mb-4 footer-gautham-book-title">
+                Drop us a mail
+              </div>
               <a
                 href="mailto:contact@alivenow.in"
-                className="text-4xl text-gray-300 hover:underline"
+                className="text-4xl text-gray-300 hover:underline footer-gautham-book"
               >
                 contact@alivenow.in
               </a>
@@ -28,21 +30,27 @@ export default function Footer() {
             </div>
 
             <div>
-              <h3 className="text-4xl font-normal mb-4">Registered Company:</h3>
+              <div className="text-4xl font-normal mb-4 footer-gautham-book-title">
+                Registered Company:
+              </div>
               <Link
                 href="https://3d360technologies.com/"
                 className="text-lg text-gray-300 space-y-1 underline hover:text-gray-400 transition-colors"
                 target="_blank"
               >
-                <p className="text-2xl">3D360 Extended Reality</p>
-                <p className="text-2xl">Technologies Pvt Ltd</p>
+                <div className="text-2xl footer-gautham-book">
+                  3D360 Extended Reality
+                </div>
+                <div className="text-2xl footer-gautham-book">
+                  Technologies Pvt Ltd
+                </div>
               </Link>
             </div>
           </div>
 
           {/* Center Section - Navigation Links */}
-          <div className="space-y-6 ">
-            <div className="space-y-4">
+          <div className="space-y-6 header-font">
+            <div className="space-y-4 ">
               <Link
                 href="https://www.alivenow.in/"
                 className="block text-lg font-medium hover:text-gray-300 transition-colors"
@@ -103,9 +111,11 @@ export default function Footer() {
           </div>
 
           {/* Right Section - What We Do */}
-          <div className="space-y-6">
-            <h3 className="text-xl font-bold mb-6">WHAT WE DO</h3>
-            <div className="space-y-4">
+          <div className="space-y-6 footer-gautham-book">
+            <h3 className="text-2xl font-bold mb-6 footer-gautham-book-title">
+              WHAT WE DO
+            </h3>
+            <div className="space-y-4 mt-3">
               <Link
                 href="https://www.alivenow.in/GenerativeAI.php"
                 className="block text-lg hover:text-gray-300 transition-colors"

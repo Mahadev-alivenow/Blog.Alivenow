@@ -150,3 +150,94 @@ h3 {
 p {
   @apply text-base mb-4 leading-relaxed;
 }
+
+/* Montserrat Regular */
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/Montserrat-Regular.otf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+/* Montserrat Bold */
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/Montserrat-Bold.otf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+
+@font-face {
+  font-family: 'Gotham-Medium';
+  src: url('/fonts/Gotham-Medium.otf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gotham-Ultra';
+  src: url('/fonts/Gotham_Ultra.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gotham-Book';
+  src: url('/fonts/Gotham_Book.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Montserrat-Bold';
+  src: url('/fonts/Montserrat-Bold.otf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+
+}
+
+@font-face {
+  font-family: 'Montserrat-Regular';
+  src: url('/fonts/Gotham_Book.ttf') format('truetype');
+  /* font-weight: 700; */
+  /* font-style: normal; */
+
+}
+@layer base {
+  
+  .gautham-medium-regular {
+    font-family: 'Gotham-Medium-Regular', 'Helvetica', sans-serif;
+  }
+  .header-font {
+    font-family: 'Gotham-Medium', 'Helvetica', sans-serif;
+  }
+
+  .header-font-title {
+    font-family: 'Gotham-Ultra', 'Helvetica', sans-serif;
+
+  }
+
+  .footer-gautham-book {
+    font-family: 'Gotham-Book', 'Helvetica', sans-serif;
+  }
+  .footer-gautham-book-title {
+    font-family: 'Montserrat-Bold', 'Helvetica', sans-serif;
+
+  }
+  .monRegular {
+    font-family: 'Montserrat-Regular', 'Helvetica', sans-serif;
+
+  }
+  .monBold {
+    font-family: 'Montserrat-Bold', 'Helvetica', sans-serif;
+  }
+  /* .footer-gautham-medium {
+    font-family: 'Gotham-Medium', 'Helvetica', sans-serif;    
+  }  */
+}
+
+
+
+/* Gotham-Medium
+Gotham-ultra */

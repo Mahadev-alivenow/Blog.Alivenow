@@ -52,7 +52,7 @@ export default function BlogHeader({ onSearch, tags = [] }) {
 
   return (
     <header
-      className={`bg-white shadow-sm border-b sticky top-0 z-50 transition-all duration-500 ease-in-out ${
+      className={`bg-white header-font shadow-sm border-b sticky top-0 z-50 transition-all duration-500 ease-in-out ${
         isMenuOpen ? "h-screen" : "h-17"
       }`}
     >
@@ -140,13 +140,13 @@ export default function BlogHeader({ onSearch, tags = [] }) {
 
         {/* Expanded menu content that appears when isMenuOpen is true */}
         <div
-          className={`flex-1 flex items-start  md:items-center justify-center pb-8 overflow-y-auto transition-all duration-500 ease-in-out ${
+          className={`flex-1  flex items-start  md:items-center justify-center pb-8 overflow-y-auto transition-all duration-500 ease-in-out mt-2 md:mt-8 ${
             isMenuOpen
               ? "transform translate-y-0 opacity-100"
               : "transform -translate-y-full opacity-0 pointer-events-none"
           }`}
         >
-          <div className="w-full max-w-6xl pt-4 px-2 md:pt-6 md:px-0">
+          <div className="w-full max-w-6xl pt-4 px-2 md:pt-6 md:px-0 ">
             {/* Mobile Layout - 2 Column Grid */}
             <div className="block md:hidden">
               <div className="grid grid-cols-2 gap-2 text-black">
@@ -154,7 +154,7 @@ export default function BlogHeader({ onSearch, tags = [] }) {
                 <div className="space-y-8">
                   {/* About Us Section */}
                   <div className="space-y-4">
-                    <h2 className="text-xl font-bold tracking-wide">
+                    <h2 className="text-xl font-bold tracking-wide header-font-title">
                       ABOUT US
                     </h2>
                     <div className="space-y-3">
@@ -184,7 +184,9 @@ export default function BlogHeader({ onSearch, tags = [] }) {
 
                   {/* Work Section */}
                   <div className="space-y-4">
-                    <h2 className="text-xl font-bold tracking-wide">WORK</h2>
+                    <h2 className="text-xl font-bold tracking-wide header-font-title">
+                      WORK
+                    </h2>
                     <div className="space-y-3">
                       <Link
                         href="https://www.alivenow.in/Portfolio.php"
@@ -212,7 +214,9 @@ export default function BlogHeader({ onSearch, tags = [] }) {
 
                   {/* Contact Section */}
                   <div className="space-y-4">
-                    <h2 className="text-xl font-bold tracking-wide">CONTACT</h2>
+                    <h2 className="text-xl font-bold tracking-wide header-font-title">
+                      CONTACT
+                    </h2>
                     <div className="space-y-3">
                       <Link
                         href="https://www.alivenow.in/Careers.php"
@@ -229,7 +233,7 @@ export default function BlogHeader({ onSearch, tags = [] }) {
                 <div className="space-y-8">
                   {/* Services Section */}
                   <div className="space-y-4">
-                    <h2 className="text-xl font-bold tracking-wide">
+                    <h2 className="text-xl font-bold tracking-wide header-font-title">
                       SERVICES
                     </h2>
                     <div className="space-y-3">
@@ -442,7 +446,7 @@ export default function BlogHeader({ onSearch, tags = [] }) {
             <div className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 text-black">
               {/* About Us Section */}
               <div className="space-y-6">
-                <h2 className="text-2xl md:text-3xl font-bold tracking-wide">
+                <h2 className="text-2xl md:text-3xl font-bold tracking-wide header-font-title">
                   ABOUT US
                 </h2>
                 <div className="space-y-4">
@@ -472,7 +476,7 @@ export default function BlogHeader({ onSearch, tags = [] }) {
 
               {/* Services Section */}
               <div className="space-y-6">
-                <h2 className="text-2xl md:text-3xl font-bold tracking-wide">
+                <h2 className="text-2xl md:text-3xl font-bold tracking-wide header-font-title">
                   SERVICES
                 </h2>
                 <div className="space-y-4">
@@ -579,7 +583,7 @@ export default function BlogHeader({ onSearch, tags = [] }) {
 
               {/* Work Section */}
               <div className="space-y-6">
-                <h2 className="text-2xl md:text-3xl font-bold tracking-wide">
+                <h2 className="text-2xl md:text-3xl font-bold tracking-wide header-font-title">
                   WORK
                 </h2>
                 <div className="space-y-4">
@@ -607,7 +611,7 @@ export default function BlogHeader({ onSearch, tags = [] }) {
                 </div>
 
                 <div className="pt-8">
-                  <h2 className="text-2xl md:text-3xl font-bold tracking-wide mb-6">
+                  <h2 className="text-2xl md:text-3xl font-bold tracking-wide mb-6 header-font-title">
                     CONTACT
                   </h2>
                   <Link

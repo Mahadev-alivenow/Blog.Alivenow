@@ -91,7 +91,7 @@ export default function PostClient({ post, recentPosts }) {
           </div>
         </header>
 
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 font-[Montserrat]">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Main Content */}
             <article className="lg:col-span-3 animate-slide-in-up">
@@ -156,7 +156,7 @@ export default function PostClient({ post, recentPosts }) {
 
               {/* Content */}
               <div
-                className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-[#E92628] prose-strong:text-gray-900 prose-code:text-pink-600 prose-code:bg-gray-100 prose-code:px-1 prose-code:rounded prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-blockquote:border-l-[#E92628] prose-blockquote:text-gray-700 [&_iframe]:rounded-lg [&_iframe]:shadow-lg animate-slide-in-up animation-delay-600"
+                className=" prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-[#E92628] prose-strong:text-gray-900 prose-code:text-pink-600 prose-code:bg-gray-100 prose-code:px-1 prose-code:rounded prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-blockquote:border-l-[#E92628] prose-blockquote:text-gray-700 [&_iframe]:rounded-lg [&_iframe]:shadow-lg animate-slide-in-up animation-delay-600"
                 dangerouslySetInnerHTML={{ __html: post.content }}
               />
 
