@@ -171,11 +171,13 @@ export default function PostClient({ post, recentPosts }) {
                         className="w-12 h-12 rounded-full transition-transform duration-300 group-hover:scale-110"
                       />
                     )}
-                    <div>
-                      <p className="font-medium text-gray-900 group-hover:text-[#E92628] transition-colors duration-300">
+                    <div className="leading-none">
+                      <span className="block text-base font-medium text-gray-900 group-hover:text-[#E92628] transition-colors duration-300">
                         AliveNow
-                      </p>
-                      <p className="text-sm text-gray-600">Author</p>
+                      </span>
+                      <span className="block text-sm text-gray-600">
+                        Author
+                      </span>
                     </div>
                   </div>
 
