@@ -122,8 +122,12 @@ const PostCard = ({ post, index }) => {
         </CardHeader>
 
         <CardContent>
-          <p
+          {/* <p
             className="text-gray-600 mb-4 line-clamp-3 group-hover:text-gray-700 transition-colors duration-200"
+            dangerouslySetInnerHTML={{ __html: post.excerpt }}
+          /> */}
+          <div
+            className="prose prose-gray max-w-none mb-4 line-clamp-3 group-hover:prose-red"
             dangerouslySetInnerHTML={{ __html: post.excerpt }}
           />
 
