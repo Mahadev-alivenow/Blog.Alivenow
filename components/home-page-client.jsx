@@ -22,7 +22,7 @@ const SearchModal = dynamic(() => import("@/components/search-modal"), {
 export default function HomePageClient({ serverData }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   const [posts, setPosts] = useState(serverData.initialPosts);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(serverData.initialPage);
@@ -36,23 +36,18 @@ export default function HomePageClient({ serverData }) {
 
   const perPage = 10;
 
-  // Memoize random tags to prevent reshuffling
-  // const randomTags = useMemo(() => {
-  //   if (serverData.allTags.length > 0) {
-  //     const shuffled = [...serverData.allTags].sort(() => 0.5 - Math.random());
-  //     return shuffled.slice(0, 10);
-  //   }
-  //   return [];
-  // }, [serverData.allTags]);
-  // Generate random tags only once per page load
-  const randomTagsRef = useRef(null);
-
-  if (!randomTagsRef.current && serverData.allTags.length > 0) {
-    const shuffled = [...serverData.allTags].sort(() => 0.5 - Math.random());
-    randomTagsRef.current = shuffled.slice(0, 10);
-  }
-
-  const randomTags = randomTagsRef.current || [];
+  const randomTags = useMemo(() => {
+    if (serverData.allTags.length > 0) {
+      // Use a stable seed based on tags length to prevent hydration mismatch
+      const seed = serverData.allTags.length;
+      const shuffled = [...serverData.allTags].sort((a, b) => {
+        // Create deterministic "random" order using tag IDs
+        return ((a.id * seed) % 100) - ((b.id * seed) % 100);
+      });
+      return shuffled.slice(0, 10);
+    }
+    return [];
+  }, [serverData.allTags]);
 
   // Update URL when filters change
   const updateURL = useCallback(
@@ -181,7 +176,7 @@ export default function HomePageClient({ serverData }) {
         />
       )}
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 font-[Montserrat]">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           <div className="lg:col-span-3">
             <section className="mb-12" ref={heroRef}>
@@ -230,11 +225,6 @@ export default function HomePageClient({ serverData }) {
               randomTags={randomTags}
               selectedTags={selectedTags}
               onTagClick={handleTagClick}
-              onClear={() => {
-                setSelectedTags([]); // reset tags
-                loadPosts(1, searchQuery, []); // also reload posts with no filters
-                updateURL(1, searchQuery, []);
-              }}
             />
           </div>
         </div>

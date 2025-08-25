@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, User, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { gsap } from "gsap";
-import { authorMap, formatDate } from "@/utils/helpers";
+import { formatDate } from "@/utils/helpers";
 
 // Optimized Image Component with Lazy Loading
 function LazyImage({
@@ -95,6 +95,9 @@ const PostCard = ({ post, index }) => {
     }
   }, [index]);
 
+  const safeTitle = post.title || "";
+  const safeExcerpt = post.excerpt || "";
+
   return (
     <Link href={`/${post.slug}`}>
       <Card
@@ -123,22 +126,21 @@ const PostCard = ({ post, index }) => {
 
           <h3
             className="text-xl font-bold line-clamp-2 group-hover:text-[#E92628] transition-colors duration-200 leading-tight"
-            dangerouslySetInnerHTML={{ __html: post.title }}
+            dangerouslySetInnerHTML={{ __html: safeTitle }}
           />
         </CardHeader>
 
         <CardContent>
           <p
             className="text-gray-600 mb-4 line-clamp-3 group-hover:text-gray-700 transition-colors duration-200"
-            dangerouslySetInnerHTML={{ __html: post.excerpt }}
+            dangerouslySetInnerHTML={{ __html: safeExcerpt }}
           />
 
           <div className="flex items-center justify-between text-sm text-gray-500">
             <div className="flex items-center space-x-4">
               <div className="flex items-center">
                 <User className="h-4 w-4 mr-1" />
-                {/* Author - AliveNow */}
-                <span>Author - {authorMap[post.author.name] || post.author.name}</span>
+                Author - AliveNow
               </div>
               <div className="flex items-center">
                 <Calendar className="h-4 w-4 mr-1" />
