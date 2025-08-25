@@ -1,7 +1,7 @@
 import { Suspense } from "react";
-import { Metadata } from "next";
 import HomePageClient from "@/components/home-page-client";
 import PageLoadingFallback from "@/components/page-loading-fallback";
+import { JsonLd } from "@/components/json-ld";
 import {
   getPosts,
   getTags,
@@ -46,10 +46,10 @@ export async function generateMetadata() {
 
 // Server Component - handles data fetching
 export default async function HomePage({ searchParams }) {
-  const page = parseInt(searchParams?.page) || 1;
+  const page = Number.parseInt(searchParams?.page) || 1;
   const search = searchParams?.search || "";
   const tags = searchParams?.tags
-    ? searchParams.tags.split(",").map((id) => parseInt(id))
+    ? searchParams.tags.split(",").map((id) => Number.parseInt(id))
     : [];
 
   try {
@@ -79,9 +79,12 @@ export default async function HomePage({ searchParams }) {
     };
 
     return (
-      <Suspense fallback={<PageLoadingFallback />}>
-        <HomePageClient serverData={serverData} />
-      </Suspense>
+      <>
+        <JsonLd type="blog" />
+        <Suspense fallback={<PageLoadingFallback />}>
+          <HomePageClient serverData={serverData} />
+        </Suspense>
+      </>
     );
   } catch (error) {
     console.error("Error fetching server data:", error);
@@ -99,12 +102,15 @@ export default async function HomePage({ searchParams }) {
     };
 
     return (
-      <Suspense fallback={<PageLoadingFallback />}>
-        <HomePageClient serverData={fallbackData} />
-      </Suspense>
+      <>
+        <JsonLd type="blog" />
+        <Suspense fallback={<PageLoadingFallback />}>
+          <HomePageClient serverData={fallbackData} />
+        </Suspense>
+      </>
     );
   }
 }
 
 // Enable ISR - revalidate every 3600 seconds (1 hour)
-export const revalidate = 1800; // 30 minutes
+export const revalidate = 3600;
