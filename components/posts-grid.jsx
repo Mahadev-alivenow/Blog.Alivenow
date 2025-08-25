@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, User, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { gsap } from "gsap";
-import { formatDate } from "@/utils/helpers";
+import { authorMap, formatDate } from "@/utils/helpers";
 
 // Optimized Image Component with Lazy Loading
 function LazyImage({
@@ -19,52 +19,58 @@ function LazyImage({
   priority = false,
 }) {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [isInView, setIsInView] = useState(priority);
+  const [hasError, setHasError] = useState(false);
   const imgRef = useRef(null);
-  const [imageSrc, setImageSrc] = useState(priority ? src : null);
+  const [imageSrc, setImageSrc] = useState(src);
 
   useEffect(() => {
-    if (priority) return;
+    if (!priority && imgRef.current) {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            // Image is in view, we can start loading if not already
+            observer.disconnect();
+          }
+        },
+        { rootMargin: "50px" }
+      );
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsInView(true);
-          setImageSrc(src);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: "50px" }
-    );
-
-    if (imgRef.current) {
       observer.observe(imgRef.current);
+      return () => observer.disconnect();
     }
-
-    return () => observer.disconnect();
-  }, [src, priority]);
+  }, [priority]);
 
   return (
     <div
       ref={imgRef}
       className={`${aspectRatio} overflow-hidden relative ${className}`}
     >
-      {!isLoaded && (
+      {!isLoaded && !hasError && (
         <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 animate-pulse flex items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
         </div>
       )}
-      {imageSrc && (
-        <img
-          src={imageSrc}
-          alt={alt}
-          className={`w-full h-full ${imgSize} transition-all duration-700 ${
-            isLoaded ? "opacity-100 group-hover:scale-110" : "opacity-0"
-          }`}
-          onLoad={() => setIsLoaded(true)}
-          loading={priority ? "eager" : "lazy"}
-        />
+      {hasError && (
+        <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
+          <div className="text-gray-400 text-center">
+            <div className="text-2xl mb-2">📷</div>
+            <div className="text-xs">Image not available</div>
+          </div>
+        </div>
       )}
+      <img
+        src={imageSrc || "/placeholder.svg"}
+        alt={alt}
+        className={`w-full h-full ${imgSize} transition-all duration-700 ${
+          isLoaded ? "opacity-100 group-hover:scale-110" : "opacity-0"
+        }`}
+        onLoad={() => setIsLoaded(true)}
+        onError={() => {
+          setHasError(true);
+          setIsLoaded(false);
+        }}
+        loading={priority ? "eager" : "lazy"}
+      />
     </div>
   );
 }
@@ -122,12 +128,8 @@ const PostCard = ({ post, index }) => {
         </CardHeader>
 
         <CardContent>
-          {/* <p
+          <p
             className="text-gray-600 mb-4 line-clamp-3 group-hover:text-gray-700 transition-colors duration-200"
-            dangerouslySetInnerHTML={{ __html: post.excerpt }}
-          /> */}
-          <div
-            className="prose font-body prose-gray max-w-none mb-4 line-clamp-3 group-hover:prose-red"
             dangerouslySetInnerHTML={{ __html: post.excerpt }}
           />
 
@@ -135,7 +137,8 @@ const PostCard = ({ post, index }) => {
             <div className="flex items-center space-x-4">
               <div className="flex items-center">
                 <User className="h-4 w-4 mr-1" />
-                Author - AliveNow
+                {/* Author - AliveNow */}
+                <span>Author - {authorMap[post.author.name] || post.author.name}</span>
               </div>
               <div className="flex items-center">
                 <Calendar className="h-4 w-4 mr-1" />

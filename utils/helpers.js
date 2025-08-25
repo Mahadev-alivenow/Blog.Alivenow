@@ -74,3 +74,15 @@ export function getReadingTime(content) {
   const words = stripHtml(content).split(/\s+/).length;
   return Math.ceil(words / wordsPerMinute);
 }
+
+
+export const authorMap = {
+  super_admin: "AliveNow",
+  siddharth_satyanath: "Siddharth Satyanath",
+  gurjeet_singh: "Gurjeet Singh",
+  pavan_kumar: "Pavan Kumar",
+  sneha_menon: "Sneha Menon",
+  anish_joy: "Anish Joy",
+  rushali_rastogi: "Rushali Rastogi",
+  // add other authors here
+};

@@ -9,7 +9,7 @@ const nextConfig = {
   },
   images: {
     unoptimized: true,
-    domains: ["https://blog.alivenow.in/"], // Add your WordPress domain
+    domains: [ "blog.alivenow.in","cms-blog.alivenow.in","localhost"], // Add your WordPress domain
   },
 
   // Enable static optimization

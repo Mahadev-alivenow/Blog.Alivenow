@@ -10,6 +10,7 @@ import Image from "next/image";
 import Footer from "@/components/footer";
 import ShareButton from "@/components/ShareButton";
 import { PostJsonLd } from "@/components/json-ld";
+import { authorMap } from "@/utils/helpers";
 
 function PostSkeleton() {
   return (
@@ -133,7 +134,10 @@ export default function PostClient({ post, recentPosts }) {
                 <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600 mb-6 animate-slide-in-up animation-delay-400">
                   <div className="flex items-center hover:text-[#E92628] transition-colors duration-300">
                     <User className="h-4 w-4 mr-2" />
-                    <span>Author - AliveNow</span>
+                    {/* <span>Author - AliveNow</span> */}
+                    <span>
+                      Author - {authorMap[post.author.name] || post.author.name}
+                    </span>
                   </div>
 
                   <div className="flex items-center hover:text-[#E92628] transition-colors duration-300">

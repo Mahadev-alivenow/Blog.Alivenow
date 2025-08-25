@@ -12,6 +12,7 @@ import PostAnalytics from "@/components/post-analytics";
 import Image from "next/image";
 import Footer from "@/components/footer";
 import ShareButton from "@/components/ShareButton";
+import { authorMap } from "@/utils/helpers";
 
 function PostSkeleton() {
   return (
@@ -164,7 +165,10 @@ export default async function PostClientPage({
                 <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600 mb-6 animate-slide-in-up animation-delay-400">
                   <div className="flex items-center hover:text-[#E92628] transition-colors duration-300">
                     <User className="h-4 w-4 mr-2" />
-                    <span>Author - AliveNow</span>
+                    {/* <span>Author - AliveNow</span> */}
+                    <span>
+                      Author - {authorMap[post.author.name] || post.author.name}
+                    </span>
                   </div>
 
                   <div className="flex items-center hover:text-[#E92628] transition-colors duration-300">
@@ -204,7 +208,11 @@ export default async function PostClientPage({
                     )}
                     <div>
                       <p className="font-medium text-gray-900 group-hover:text-[#E92628] transition-colors duration-300">
-                        AliveNow
+                        {/* AliveNow */}
+                        <span>
+                          {/* Author -{" "} */}
+                          {authorMap[post.author.name] || post.author.name}
+                        </span>
                       </p>
                       <p className="text-sm text-gray-600">Author</p>
                     </div>

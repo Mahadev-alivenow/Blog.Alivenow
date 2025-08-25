@@ -10,6 +10,8 @@ import Image from "next/image";
 import Footer from "@/components/footer";
 import ShareButton from "@/components/ShareButton";
 import { PostJsonLd } from "@/components/json-ld";
+import Transcriptor from "@/components/Transcriptor";
+import { authorMap } from "@/utils/helpers";
 
 function PostSkeleton() {
   return (
@@ -133,7 +135,11 @@ export default function PostClient({ post, recentPosts }) {
                 <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600 mb-6 animate-slide-in-up animation-delay-400">
                   <div className="flex items-center hover:text-[#E92628] transition-colors duration-300">
                     <User className="h-4 w-4 mr-2" />
-                    <span>Author - AliveNow</span>
+                    {/* <span>Author - AliveNow</span> */}
+                    {/* <span>Author - {post.author.name}</span> */}
+                    <span>
+                      Author - {authorMap[post.author.name] || post.author.name}
+                    </span>
                   </div>
 
                   <div className="flex items-center hover:text-[#E92628] transition-colors duration-300">
@@ -152,6 +158,9 @@ export default function PostClient({ post, recentPosts }) {
                   className="text-xl text-gray-700 leading-relaxed mb-8 border-l-4 border-[#E92628] pl-6 italic animate-slide-in-up animation-delay-500 hover:border-l-8 transition-all duration-300"
                   dangerouslySetInnerHTML={{ __html: post.excerpt }}
                 />
+
+                {/* Transcriptor */}
+                {/* <Transcriptor content={post.content} title={post.title} /> */}
               </header>
 
               {/* Content */}
@@ -173,7 +182,11 @@ export default function PostClient({ post, recentPosts }) {
                     )}
                     <div className="leading-none">
                       <span className="block text-base font-medium text-gray-900 group-hover:text-[#E92628] transition-colors duration-300">
-                        AliveNow
+                        {/* AliveNow */}
+                        <span>
+
+                          {authorMap[post.author.name] || post.author.name}
+                        </span>
                       </span>
                       <span className="block text-sm text-gray-600">
                         Author
