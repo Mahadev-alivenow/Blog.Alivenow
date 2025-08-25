@@ -38,11 +38,23 @@ export default function HomePageClient({ serverData }) {
 
   const randomTags = useMemo(() => {
     if (serverData.allTags.length > 0) {
-      // Use a stable seed based on tags length to prevent hydration mismatch
-      const seed = serverData.allTags.length;
+      // Use a session-based seed that only changes on page refresh
+      let sessionSeed = 1;
+      if (typeof window !== "undefined") {
+        // Try to get existing seed from sessionStorage, or create new one
+        const storedSeed = sessionStorage.getItem("randomTagsSeed");
+        if (storedSeed) {
+          sessionSeed = Number.parseInt(storedSeed, 10);
+        } else {
+          // Create new seed only on fresh page load
+          sessionSeed = Date.now() % 1000;
+          sessionStorage.setItem("randomTagsSeed", sessionSeed.toString());
+        }
+      }
+
+      // Create deterministic "random" order using session seed
       const shuffled = [...serverData.allTags].sort((a, b) => {
-        // Create deterministic "random" order using tag IDs
-        return ((a.id * seed) % 100) - ((b.id * seed) % 100);
+        return ((a.id * sessionSeed) % 100) - ((b.id * sessionSeed) % 100);
       });
       return shuffled.slice(0, 10);
     }
@@ -122,6 +134,13 @@ export default function HomePageClient({ serverData }) {
     },
     [searchQuery, serverData.allTags, updateURL, loadPosts]
   );
+
+  const handleClearTags = useCallback(() => {
+    setSelectedTags([]);
+    setCurrentPage(1);
+    updateURL(1, searchQuery, []);
+    loadPosts(1, searchQuery, []);
+  }, [searchQuery, updateURL, loadPosts]);
 
   // Handle tag click
   const handleTagClick = useCallback(
@@ -225,6 +244,7 @@ export default function HomePageClient({ serverData }) {
               randomTags={randomTags}
               selectedTags={selectedTags}
               onTagClick={handleTagClick}
+              onClear={handleClearTags}
             />
           </div>
         </div>

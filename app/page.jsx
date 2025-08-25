@@ -112,5 +112,5 @@ export default async function HomePage({ searchParams }) {
   }
 }
 
-// Enable ISR - revalidate every 3600 seconds (1 hour)
-export const revalidate = 3600;
+// Enable ISR - revalidate every 300 seconds (5min)
+export const revalidate = 300;

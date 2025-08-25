@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, User, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { gsap } from "gsap";
-import { formatDate } from "@/utils/helpers";
+import { authorMap, formatDate } from "@/utils/helpers";
 
 // Optimized Image Component with Lazy Loading
 function LazyImage({
@@ -95,8 +95,10 @@ const PostCard = ({ post, index }) => {
     }
   }, [index]);
 
-  const safeTitle = post.title || "";
-  const safeExcerpt = post.excerpt || "";
+  const safeTitle =
+    post?.title && typeof post.title === "string" ? post.title : "";
+  const safeExcerpt =
+    post?.excerpt && typeof post.excerpt === "string" ? post.excerpt : "";
 
   return (
     <Link href={`/${post.slug}`}>
@@ -124,23 +126,39 @@ const PostCard = ({ post, index }) => {
             ))}
           </div>
 
-          <h3
-            className="text-xl font-bold line-clamp-2 group-hover:text-[#E92628] transition-colors duration-200 leading-tight"
-            dangerouslySetInnerHTML={{ __html: safeTitle }}
-          />
+          {safeTitle ? (
+            <h3
+              className="text-xl font-bold line-clamp-2 group-hover:text-[#E92628] transition-colors duration-200 leading-tight"
+              dangerouslySetInnerHTML={{ __html: safeTitle }}
+            />
+          ) : (
+            <h3 className="text-xl font-bold line-clamp-2 group-hover:text-[#E92628] transition-colors duration-200 leading-tight">
+              Untitled Post
+            </h3>
+          )}
         </CardHeader>
 
         <CardContent>
-          <p
-            className="text-gray-600 mb-4 line-clamp-3 group-hover:text-gray-700 transition-colors duration-200"
-            dangerouslySetInnerHTML={{ __html: safeExcerpt }}
-          />
+          {safeExcerpt ? (
+            <p
+              className="text-gray-600 mb-4 line-clamp-3 group-hover:text-gray-700 transition-colors duration-200"
+              dangerouslySetInnerHTML={{ __html: safeExcerpt }}
+            />
+          ) : (
+            <p className="text-gray-600 mb-4 line-clamp-3 group-hover:text-gray-700 transition-colors duration-200">
+              No excerpt available.
+            </p>
+          )}
 
           <div className="flex items-center justify-between text-sm text-gray-500">
             <div className="flex items-center space-x-4">
               <div className="flex items-center">
                 <User className="h-4 w-4 mr-1" />
-                Author - AliveNow
+<span>
+                          Author -{" "}
+                          {authorMap[post.author.name] || post.author.name}
+                        </span>
+                {/* Author - AliveNow */}
               </div>
               <div className="flex items-center">
                 <Calendar className="h-4 w-4 mr-1" />
